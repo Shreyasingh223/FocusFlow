@@ -666,3 +666,142 @@ nav {
     gap: 10px;
   }
 }
+
+/* TASK FORM */
+
+.task-form {
+  background: white;
+  border: 1px solid #e8e8ee;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dark .task-form {
+  background: #181a20;
+  border-color: #282b33;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-header h3 {
+  font-size: 16px;
+}
+
+.close-form {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+
+  display: grid;
+  place-items: center;
+}
+
+.task-form input,
+.task-form select {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid #dedfe6;
+  border-radius: 9px;
+
+  background: transparent;
+  color: inherit;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.task-form input:focus,
+.task-form select:focus {
+  border-color: #635bff;
+}
+
+.task-form select option {
+  color: #171923;
+}
+
+.save-task {
+  border: none;
+
+  background: #635bff;
+  color: white;
+
+  padding: 12px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.save-task:hover {
+  transform: translateY(-1px);
+}
+
+
+/* ADD TASK BUTTON */
+
+.add-task {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* DELETE BUTTON */
+
+.delete-task {
+  border: none;
+  background: transparent;
+
+  color: #9a9ca5;
+
+  cursor: pointer;
+
+  padding: 6px;
+
+  border-radius: 7px;
+
+  display: grid;
+  place-items: center;
+
+  transition: 0.2s;
+}
+
+.delete-task:hover {
+  color: #d84a4a;
+  background: #ffe8e8;
+}
+
+
+/* MOBILE TASK FORM */
+
+@media (max-width: 600px) {
+
+  .task-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .delete-task {
+    margin-left: auto;
+  }
+
+}

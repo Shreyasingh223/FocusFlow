@@ -1,3 +1,4 @@
+import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 
 import { useState } from "react";
@@ -152,52 +153,7 @@ function App() {
 
 
           {/* Tasks */}
-          <section className="tasks-section">
-
-            <div className="section-header">
-
-              <div>
-                <h2>Today's Tasks</h2>
-
-                <p>
-                  2 of 5 completed
-                </p>
-              </div>
-
-              <button className="add-task">
-                + Add task
-              </button>
-
-            </div>
-
-
-            <div className="tasks">
-
-              <Task
-                title="Finish React project"
-                priority="High"
-              />
-
-              <Task
-                title="Practice JavaScript"
-                priority="Medium"
-              />
-
-              <Task
-                title="Update GitHub README"
-                priority="Low"
-                completed
-              />
-
-              <Task
-                title="Read React documentation"
-                priority="Medium"
-                completed
-              />
-
-            </div>
-
-          </section>
+          <TaskList />
 
         </section>
 
