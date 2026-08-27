@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTimer } from "../hooks/useTimer";
 
-function Timer() {
+function Timer({ selectedTask }) {
 
   const [mode, setMode] = useState("focus");
 
@@ -62,6 +62,14 @@ function Timer() {
         </span>
 
       </div>
+
+      {selectedTask && (
+        <div className="current-task">
+          <span>🎯 Focusing on</span>
+
+          <strong>{selectedTask.title}</strong>
+        </div>
+      )}
 
 
       <div className="timer">

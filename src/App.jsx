@@ -18,10 +18,33 @@ import {
 
 import "./App.css";
 
+const demoTasks = [
+  {
+    id: 1,
+    title: "Finish React project",
+  },
+  {
+    id: 2,
+    title: "Practice JavaScript",
+  },
+  {
+    id: 3,
+    title: "Update GitHub README",
+  },
+  {
+    id: 4,
+    title: "Read React documentation",
+  },
+];
+
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
+  const currentTask = demoTasks.find(
+    (task) => task.id === selectedTask
+  );
   return (
     <div className={darkMode ? "app dark" : "app"}>
 
@@ -149,11 +172,16 @@ function App() {
 
 
           {/* Timer */}
-          <Timer />
+          <Timer
+            selectedTask={currentTask}
+          />
 
 
           {/* Tasks */}
-          <TaskList />
+          <TaskList
+            selectedTask={selectedTask}
+            setSelectedTask={setSelectedTask}
+          />
 
         </section>
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Trash2, Plus, X } from "lucide-react";
 
-function TaskList() {
+function TaskList({ selectedTask, setSelectedTask }) {
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("focusflow-tasks");
 
@@ -42,7 +42,6 @@ function TaskList() {
     );
   }, [tasks]);
 
-  const [selectedTask, setSelectedTask] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   const [newTask, setNewTask] = useState({
