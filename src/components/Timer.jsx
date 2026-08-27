@@ -7,7 +7,7 @@ function Timer() {
 
   const durations = {
     focus: 25,
-    short: 1,
+    short: 10,
     long: 15,
   };
 

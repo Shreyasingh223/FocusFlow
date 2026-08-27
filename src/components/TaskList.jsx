@@ -1,33 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Plus, X } from "lucide-react";
 
 function TaskList() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Finish React project",
-      priority: "High",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Practice JavaScript",
-      priority: "Medium",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Update GitHub README",
-      priority: "Low",
-      completed: true,
-    },
-    {
-      id: 4,
-      title: "Read React documentation",
-      priority: "Medium",
-      completed: true,
-    },
-  ]);
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem("focusflow-tasks");
+
+    return savedTasks
+      ? JSON.parse(savedTasks)
+      : [
+        {
+          id: 1,
+          title: "Finish React project",
+          priority: "High",
+          completed: false,
+        },
+        {
+          id: 2,
+          title: "Practice JavaScript",
+          priority: "Medium",
+          completed: false,
+        },
+        {
+          id: 3,
+          title: "Update GitHub README",
+          priority: "Low",
+          completed: true,
+        },
+        {
+          id: 4,
+          title: "Read React documentation",
+          priority: "Medium",
+          completed: true,
+        },
+      ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "focusflow-tasks",
+      JSON.stringify(tasks)
+    );
+  }, [tasks]);
 
   const [showForm, setShowForm] = useState(false);
 
@@ -68,9 +81,9 @@ function TaskList() {
       previousTasks.map((task) =>
         task.id === id
           ? {
-              ...task,
-              completed: !task.completed,
-            }
+            ...task,
+            completed: !task.completed,
+          }
           : task
       )
     );
