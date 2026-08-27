@@ -42,6 +42,7 @@ function TaskList() {
     );
   }, [tasks]);
 
+  const [selectedTask, setSelectedTask] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   const [newTask, setNewTask] = useState({
@@ -199,7 +200,9 @@ function TaskList() {
             className={
               task.completed
                 ? "task completed"
-                : "task"
+                : selectedTask === task.id
+                  ? "task selected-task"
+                  : "task"
             }
             key={task.id}
           >
@@ -223,6 +226,15 @@ function TaskList() {
               >
                 {task.priority}
               </span>
+
+              {!task.completed && (
+                <button
+                  className="focus-task"
+                  onClick={() => setSelectedTask(task.id)}
+                >
+                  Focus
+                </button>
+              )}
 
             </div>
 

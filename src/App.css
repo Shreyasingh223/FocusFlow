@@ -115,14 +115,10 @@ nav {
 
 .streak-box {
   background: #fff4e8;
-
   border-radius: 14px;
-
   padding: 15px;
-
   display: flex;
   gap: 12px;
-
   color: #e47a18;
 }
 
@@ -150,15 +146,11 @@ nav {
 
 .header {
   height: 75px;
-
   background: white;
-
   border-bottom: 1px solid #e8e8ee;
-
   display: flex;
   justify-content: flex-end;
   align-items: center;
-
   padding: 0 35px;
 }
 
@@ -183,9 +175,7 @@ nav {
 .icon-button {
   width: 40px;
   height: 40px;
-
   border-radius: 50%;
-
   display: grid;
   place-items: center;
 }
@@ -197,15 +187,11 @@ nav {
 .avatar {
   width: 38px;
   height: 38px;
-
   border-radius: 50%;
-
   background: #dedcff;
   color: #5149c8;
-
   display: grid;
   place-items: center;
-
   font-weight: 700;
 }
 
@@ -214,27 +200,20 @@ nav {
 
 .content {
   max-width: 1200px;
-
   margin: auto;
-
   padding: 45px 40px;
 }
 
 .eyebrow {
   font-size: 11px;
-
   letter-spacing: 2px;
-
   color: #8a8e99;
-
   font-weight: 700;
-
   margin-bottom: 10px;
 }
 
 .welcome h1 {
   font-size: 32px;
-
   margin-bottom: 8px;
 }
 
@@ -247,27 +226,18 @@ nav {
 
 .stats {
   display: grid;
-
   grid-template-columns: repeat(3, 1fr);
-
   gap: 18px;
-
   margin: 35px 0;
 }
 
 .stat-card {
   background: white;
-
   border: 1px solid #e8e8ee;
-
   border-radius: 18px;
-
   padding: 22px;
-
   display: flex;
-
   gap: 15px;
-
   align-items: center;
 }
 
@@ -279,12 +249,9 @@ nav {
 .stat-icon {
   width: 45px;
   height: 45px;
-
   border-radius: 12px;
-
   background: #eeecff;
   color: #635bff;
-
   display: grid;
   place-items: center;
 }
@@ -292,7 +259,6 @@ nav {
 .stat-card div:last-child {
   display: flex;
   flex-direction: column;
-
   gap: 4px;
 }
 
@@ -302,7 +268,6 @@ nav {
 
 .stat-card span {
   font-size: 13px;
-
   color: #888b95;
 }
 
@@ -311,11 +276,8 @@ nav {
 
 .timer-card {
   background: white;
-
   border: 1px solid #e8e8ee;
-
   border-radius: 22px;
-
   padding: 30px;
 }
 
@@ -326,17 +288,13 @@ nav {
 
 .timer-header {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
 }
 
 .timer-label {
   font-size: 11px;
-
   letter-spacing: 1.5px;
-
   color: #8a8e99;
 }
 
@@ -346,105 +304,76 @@ nav {
 
 .session-count {
   font-size: 13px;
-
   color: #858995;
 }
 
 .timer {
   display: flex;
-
   justify-content: center;
-
   margin: 35px 0;
 }
 
 .timer-circle {
-  width: 260px;
-  height: 260px;
-
-  border-radius: 50%;
-
+  width: 350px;
+  height: 250px;
+  border-radius: 20%;
   border: 10px solid #eeecff;
-
   display: grid;
-
   place-items: center;
 }
 
 .timer-content {
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
 }
 
 .timer-mode {
   color: #8a8e99;
-
   font-size: 13px;
 }
 
 .time {
   font-size: 55px;
-
   font-weight: 700;
-
   letter-spacing: -2px;
 }
 
 .timer-controls {
   display: flex;
-
   justify-content: center;
 }
 
 .start-button {
   border: none;
-
   background: #635bff;
-
   color: white;
-
   padding: 14px 28px;
-
   border-radius: 12px;
-
   font-weight: 600;
-
   cursor: pointer;
-
   transition: 0.2s;
 }
 
 .start-button:hover {
   transform: translateY(-2px);
-
   box-shadow:
     0 8px 25px rgba(99, 91, 255, 0.25);
 }
 
 .timer-settings {
   display: flex;
-
   justify-content: center;
-
   gap: 10px;
-
   margin-top: 25px;
 }
 
 .timer-settings button {
   border: 1px solid #e2e2e8;
-
   background: transparent;
-
   padding: 8px 14px;
-
   border-radius: 8px;
-
   cursor: pointer;
-
   color: inherit;
 }
 
@@ -463,57 +392,39 @@ nav {
 
 .section-header {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
 }
 
 .section-header p {
   color: #8a8e99;
-
   font-size: 13px;
-
   margin-top: 5px;
 }
 
 .add-task {
   border: none;
-
   background: #635bff;
-
   color: white;
-
   padding: 10px 16px;
-
   border-radius: 9px;
-
   cursor: pointer;
 }
 
 .tasks {
   margin-top: 20px;
-
   display: flex;
-
   flex-direction: column;
-
   gap: 10px;
 }
 
 .task {
   background: white;
-
   border: 1px solid #e8e8ee;
-
   padding: 16px;
-
   border-radius: 12px;
-
   display: flex;
-
   align-items: center;
-
   gap: 15px;
 }
 
@@ -528,11 +439,8 @@ nav {
 
 .task-info {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   width: 100%;
 }
 
@@ -804,4 +712,40 @@ nav {
     margin-left: auto;
   }
 
+}
+
+/* SELECTED TASK */
+
+.task.selected-task {
+  border: 1px solid #635bff;
+  background: rgba(99, 91, 255, 0.05);
+}
+
+.dark .task.selected-task {
+  background: rgba(99, 91, 255, 0.12);
+}
+
+
+/* FOCUS BUTTON */
+
+.focus-task {
+  border: none;
+  background: transparent;
+
+  color: #635bff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  padding: 4px 8px;
+
+  border-radius: 6px;
+
+  transition: 0.2s;
+}
+
+.focus-task:hover {
+  background: rgba(99, 91, 255, 0.1);
 }
