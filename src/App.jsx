@@ -18,31 +18,39 @@ import {
 
 import "./App.css";
 
-const demoTasks = [
-  {
-    id: 1,
-    title: "Finish React project",
-  },
-  {
-    id: 2,
-    title: "Practice JavaScript",
-  },
-  {
-    id: 3,
-    title: "Update GitHub README",
-  },
-  {
-    id: 4,
-    title: "Read React documentation",
-  },
-];
-
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
-  const currentTask = demoTasks.find(
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      title: "Finish React project",
+      priority: "High",
+      completed: false,
+    },
+    {
+      id: 2,
+      title: "Practice JavaScript",
+      priority: "Medium",
+      completed: false,
+    },
+    {
+      id: 3,
+      title: "Update GitHub README",
+      priority: "Low",
+      completed: true,
+    },
+    {
+      id: 4,
+      title: "Read React documentation",
+      priority: "Medium",
+      completed: true,
+    },
+  ]);
+
+  const currentTask = tasks.find(
     (task) => task.id === selectedTask
   );
   return (
@@ -179,6 +187,8 @@ function App() {
 
           {/* Tasks */}
           <TaskList
+            tasks={tasks}
+            setTasks={setTasks}
             selectedTask={selectedTask}
             setSelectedTask={setSelectedTask}
           />
