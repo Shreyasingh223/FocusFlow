@@ -1,7 +1,7 @@
 import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   LayoutDashboard,
   CheckSquare,
@@ -21,38 +21,96 @@ import "./App.css";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [selectedTask, setSelectedTask] = useState(null);
 
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Finish React project",
-      priority: "High",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Practice JavaScript",
-      priority: "Medium",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Update GitHub README",
-      priority: "Low",
-      completed: true,
-    },
-    {
-      id: 4,
-      title: "Read React documentation",
-      priority: "Medium",
-      completed: true,
-    },
-  ]);
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem("focusflow-tasks");
 
+    return savedTasks
+      ? JSON.parse(savedTasks)
+      : [
+        {
+          id: 1,
+          title: "Finish React project",
+          priority: "High",
+          completed: false,
+        },
+        {
+          id: 2,
+          title: "Practice JavaScript",
+          priority: "Medium",
+          completed: false,
+        },
+        {
+          id: 3,
+          title: "Update GitHub README",
+          priority: "Low",
+          completed: true,
+        },
+        {
+          id: 4,
+          title: "Read React documentation",
+          priority: "Medium",
+          completed: true,
+        },
+      ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "focusflow-tasks",
+      JSON.stringify(tasks)
+    );
+  }, [tasks]);
+
+  // Sessions
+  const [sessions, setSessions] = useState(() => {
+    const savedSessions =
+      localStorage.getItem("focusflow-sessions");
+
+    return savedSessions
+      ? JSON.parse(savedSessions)
+      : [];
+  });
+
+
+  // Save sessions
+  useEffect(() => {
+    localStorage.setItem(
+      "focusflow-sessions",
+      JSON.stringify(sessions)
+    );
+  }, [sessions]);
+
+  const completeSession = useCallback(() => {
+    if (!selectedTask) return;
+
+    const task = tasks.find(
+      (task) => task.id === selectedTask
+    );
+
+    if (!task) return;
+
+    const newSession = {
+      id: Date.now(),
+      taskId: task.id,
+      taskTitle: task.title,
+      duration: 25,
+      completedAt: new Date().toISOString(),
+    };
+
+    setSessions((previousSessions) => [
+      ...previousSessions,
+      newSession,
+    ]);
+  }, [selectedTask, tasks]);
+
+  //find selected tasks
   const currentTask = tasks.find(
     (task) => task.id === selectedTask
   );
+
   return (
     <div className={darkMode ? "app dark" : "app"}>
 
@@ -182,6 +240,7 @@ function App() {
           {/* Timer */}
           <Timer
             selectedTask={currentTask}
+            completeSession={completeSession}
           />
 
 

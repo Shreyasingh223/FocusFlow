@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Trash2, Plus, X } from "lucide-react";
 
 function TaskList({
@@ -7,13 +7,6 @@ function TaskList({
   selectedTask,
   setSelectedTask,
 }) {
-
-  useEffect(() => {
-    localStorage.setItem(
-      "focusflow-tasks",
-      JSON.stringify(tasks)
-    );
-  }, [tasks]);
 
   const [showForm, setShowForm] = useState(false);
 
@@ -67,6 +60,10 @@ function TaskList({
     setTasks((previousTasks) =>
       previousTasks.filter((task) => task.id !== id)
     );
+
+    if (selectedTask === id) {
+      setSelectedTask(null);
+    }
   };
 
   const completedTasks = tasks.filter(

@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTimer } from "../hooks/useTimer";
 
-function Timer({ selectedTask }) {
+function Timer({ selectedTask, completeSession }) {
 
   const [mode, setMode] = useState("focus");
+  const [sessionCompleted, setSessionCompleted] = useState(false);
 
   const durations = {
-    focus: 25,
+    focus: 0.1,
     short: 10,
     long: 15,
   };
@@ -20,9 +21,25 @@ function Timer({ selectedTask }) {
     reset,
   } = useTimer(durations[mode]);
 
+  useEffect(() => {
+    if (
+      mode === "focus" &&
+      minutes === 0 &&
+      remainingSeconds === 0 &&
+      selectedTask &&
+      !sessionCompleted
+    ) {
+      completeSession();
+      setSessionCompleted(true);
+    }
+  }, [mode, minutes, remainingSeconds, selectedTask, completeSession, sessionCompleted]);
+
+
+
 
   const changeMode = (newMode) => {
     setMode(newMode);
+    setSessionCompleted(false);
     reset(durations[newMode]);
   };
 
@@ -144,13 +161,18 @@ function Timer({ selectedTask }) {
         </button>
 
 
-        <button onClick={() => reset(durations[mode])}>
+        <button
+          onClick={() => {
+            setSessionCompleted(false);
+            reset(durations[mode]);
+          }}
+        >
           Reset
         </button>
 
-      </div>
+    </div>
 
-    </section>
+    </section >
   );
 }
 
