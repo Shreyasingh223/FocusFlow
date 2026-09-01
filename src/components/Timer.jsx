@@ -7,7 +7,7 @@ function Timer({ selectedTask, completeSession }) {
   const [sessionCompleted, setSessionCompleted] = useState(false);
 
   const durations = {
-    focus: 0.1,
+    focus: 25,
     short: 10,
     long: 15,
   };
@@ -21,6 +21,16 @@ function Timer({ selectedTask, completeSession }) {
     reset,
   } = useTimer(durations[mode]);
 
+  // Reset completion status when task changes
+  useEffect(() => {
+    setSessionCompleted(false);
+
+    if (selectedTask) {
+      reset(durations.focus);
+    }
+  }, [selectedTask]);
+
+  // Detect completed focus session
   useEffect(() => {
     if (
       mode === "focus" &&
@@ -29,13 +39,17 @@ function Timer({ selectedTask, completeSession }) {
       selectedTask &&
       !sessionCompleted
     ) {
-      completeSession();
+      completeSession(durations.focus);
       setSessionCompleted(true);
     }
-  }, [mode, minutes, remainingSeconds, selectedTask, completeSession, sessionCompleted]);
-
-
-
+  }, [
+    mode,
+    minutes,
+    remainingSeconds,
+    selectedTask,
+    completeSession,
+    sessionCompleted,
+  ]);
 
   const changeMode = (newMode) => {
     setMode(newMode);
@@ -43,19 +57,21 @@ function Timer({ selectedTask, completeSession }) {
     reset(durations[newMode]);
   };
 
+  const handleReset = () => {
+    setSessionCompleted(false);
+    reset(durations[mode]);
+  };
 
   const formattedMinutes = String(minutes).padStart(2, "0");
 
   const formattedSeconds =
     String(remainingSeconds).padStart(2, "0");
 
-
   const modeName = {
     focus: "Focus",
     short: "Short Break",
     long: "Long Break",
   };
-
 
   return (
     <section className="timer-card">
@@ -75,16 +91,34 @@ function Timer({ selectedTask, completeSession }) {
         </div>
 
         <span className="session-count">
-          Session 1 of 4
+          {sessionCompleted
+            ? "Session completed ✓"
+            : "Session in progress"}
         </span>
 
       </div>
 
+
       {selectedTask && (
         <div className="current-task">
-          <span>🎯 Focusing on</span>
 
-          <strong>{selectedTask.title}</strong>
+          <span>
+            🎯 Focusing on
+          </span>
+
+          <strong>
+            {selectedTask.title}
+          </strong>
+
+        </div>
+      )}
+
+
+      {!selectedTask && (
+        <div className="current-task">
+          <span>
+            🎯 Select a task to start focusing
+          </span>
         </div>
       )}
 
@@ -96,7 +130,11 @@ function Timer({ selectedTask, completeSession }) {
           <div className="timer-content">
 
             <span className="timer-mode">
-              {isRunning ? "Focusing" : "Ready"}
+              {sessionCompleted
+                ? "Completed!"
+                : isRunning
+                  ? "Focusing"
+                  : "Ready"}
             </span>
 
             <span className="time">
@@ -117,6 +155,7 @@ function Timer({ selectedTask, completeSession }) {
           <button
             className="start-button"
             onClick={start}
+            disabled={!selectedTask || sessionCompleted}
           >
             ▶ Start Focus
           </button>
@@ -144,14 +183,12 @@ function Timer({ selectedTask, completeSession }) {
           25 min
         </button>
 
-
         <button
           className={mode === "short" ? "selected-mode" : ""}
           onClick={() => changeMode("short")}
         >
           Short break
         </button>
-
 
         <button
           className={mode === "long" ? "selected-mode" : ""}
@@ -160,19 +197,13 @@ function Timer({ selectedTask, completeSession }) {
           Long break
         </button>
 
-
-        <button
-          onClick={() => {
-            setSessionCompleted(false);
-            reset(durations[mode]);
-          }}
-        >
+        <button onClick={handleReset}>
           Reset
         </button>
 
-    </div>
+      </div>
 
-    </section >
+    </section>
   );
 }
 

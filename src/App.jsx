@@ -83,7 +83,7 @@ function App() {
     );
   }, [sessions]);
 
-  const completeSession = useCallback(() => {
+  const completeSession = useCallback((duration) => {
     if (!selectedTask) return;
 
     const task = tasks.find(
@@ -105,6 +105,10 @@ function App() {
       newSession,
     ]);
   }, [selectedTask, tasks]);
+
+  const clearHistory = () => {
+    setSessions([]);
+  };
 
   //find selected tasks
   const currentTask = tasks.find(
@@ -251,6 +255,10 @@ function App() {
             selectedTask={selectedTask}
             setSelectedTask={setSelectedTask}
           />
+          <SessionHistory
+            sessions={sessions}
+            clearHistory={clearHistory}
+          />
 
         </section>
 
@@ -305,5 +313,97 @@ function Task({ title, priority, completed }) {
   );
 }
 
+function SessionHistory({ sessions, clearHistory }) {
+
+  return (
+    <section className="session-history">
+
+      <div className="section-header">
+
+        <div>
+          <h2>Focus History</h2>
+
+          <p>
+            {sessions.length} completed session
+            {sessions.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+
+        {sessions.length > 0 && (
+          <button
+            className="clear-history"
+            onClick={clearHistory}
+          >
+            Clear history
+          </button>
+        )}
+
+      </div>
+
+
+      {sessions.length === 0 ? (
+
+        <div className="empty-history">
+          <span>🍅</span>
+
+          <p>
+            No completed sessions yet.
+          </p>
+
+          <small>
+            Complete a focus session and it will appear here.
+          </small>
+        </div>
+
+      ) : (
+
+        <div className="session-list">
+
+          {sessions
+            .slice()
+            .reverse()
+            .map((session) => (
+
+              <div
+                className="session-item"
+                key={session.id}
+              >
+
+                <div className="session-icon">
+                  🍅
+                </div>
+
+                <div className="session-info">
+
+                  <strong>
+                    {session.taskTitle}
+                  </strong>
+
+                  <span>
+                    {session.duration} min focus session
+                  </span>
+
+                </div>
+
+                <span className="session-time">
+                  {new Date(
+                    session.completedAt
+                  ).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+
+              </div>
+
+            ))}
+
+        </div>
+
+      )}
+
+    </section>
+  );
+}
 
 export default App;
