@@ -157,7 +157,7 @@ function Timer({ selectedTask, completeSession }) {
             onClick={start}
             disabled={!selectedTask || sessionCompleted}
           >
-            ▶ Start Focus
+            Start Focus
           </button>
 
         ) : (
@@ -166,7 +166,7 @@ function Timer({ selectedTask, completeSession }) {
             className="start-button"
             onClick={pause}
           >
-            ⏸ Pause
+            Pause
           </button>
 
         )}

@@ -344,7 +344,6 @@ function SessionHistory({ sessions, clearHistory }) {
       {sessions.length === 0 ? (
 
         <div className="empty-history">
-          <span>🍅</span>
 
           <p>
             No completed sessions yet.
