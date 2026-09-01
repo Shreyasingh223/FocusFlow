@@ -115,6 +115,78 @@ function App() {
     (task) => task.id === selectedTask
   );
 
+  // Dynamic Dashboard Statistics
+  const tasksRemaining = tasks.filter(
+    (task) => !task.completed
+  ).length;
+
+  const focusTime = sessions.reduce(
+    (total, session) => total + session.duration,
+    0
+  );
+
+  const focusHours = Math.floor(focusTime / 60);
+  const focusMinutes = focusTime % 60;
+
+  const formattedFocusTime =
+    focusHours > 0
+      ? `${focusHours}h ${focusMinutes}m`
+      : `${focusMinutes}m`;
+
+  // Calculate current daily streak
+  const calculateStreak = () => {
+    if (sessions.length === 0) return 0;
+
+    const completedDates = [
+      ...new Set(
+        sessions.map((session) =>
+          new Date(session.completedAt).toLocaleDateString()
+        )
+      ),
+    ];
+
+    const today = new Date();
+    let streak = 0;
+
+    for (let i = 0; ; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+
+      const dateString = date.toLocaleDateString();
+
+      if (completedDates.includes(dateString)) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  };
+
+  const currentStreak = calculateStreak();
+
+  // Dynamic date and greeting
+  const now = new Date();
+
+  const currentHour = now.getHours();
+
+  let greeting;
+
+  if (currentHour < 12) {
+    greeting = "Good morning";
+  } else if (currentHour < 18) {
+    greeting = "Good afternoon";
+  } else {
+    greeting = "Good evening";
+  }
+
+  const formattedDate = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <div className={darkMode ? "app dark" : "app"}>
 
@@ -160,8 +232,15 @@ function App() {
             <Flame size={22} />
 
             <div>
-              <strong>7 day streak</strong>
-              <span>Keep going!</span>
+              <strong>
+                {currentStreak} day streak
+              </strong>
+
+              <span>
+                {currentStreak > 0
+                  ? "Keep going!"
+                  : "Start your streak today!"}
+              </span>
             </div>
           </div>
         </div>
@@ -203,11 +282,11 @@ function App() {
           <div className="welcome">
 
             <p className="eyebrow">
-              TUESDAY, AUGUST 25
+              {formattedDate.toUpperCase()}
             </p>
 
             <h1>
-              Good afternoon, Shreya 👋
+              {greeting}, Shreya 👋
             </h1>
 
             <p className="subtitle">
@@ -222,19 +301,19 @@ function App() {
 
             <StatCard
               icon={<ListTodo />}
-              number="4"
+              number={tasksRemaining}
               label="Tasks remaining"
             />
 
             <StatCard
               icon={<Clock3 />}
-              number="2h 40m"
+              number={formattedFocusTime}
               label="Focus time"
             />
 
             <StatCard
               icon={<Flame />}
-              number="7"
+              number={currentStreak}
               label="Day streak"
             />
 

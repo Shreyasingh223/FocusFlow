@@ -8,7 +8,7 @@ function Timer({ selectedTask, completeSession }) {
 
   const durations = {
     focus: 25,
-    short: 10,
+    short: 5,
     long: 15,
   };
 
@@ -157,7 +157,7 @@ function Timer({ selectedTask, completeSession }) {
             onClick={start}
             disabled={!selectedTask || sessionCompleted}
           >
-            ▶ Start Focus
+            Start Focus
           </button>
 
         ) : (
@@ -166,7 +166,7 @@ function Timer({ selectedTask, completeSession }) {
             className="start-button"
             onClick={pause}
           >
-            ⏸ Pause
+            Pause
           </button>
 
         )}

@@ -794,11 +794,6 @@ nav {
   text-align: center;
 }
 
-.empty-history span {
-  font-size: 36px;
-  margin-bottom: 10px;
-}
-
 .empty-history p {
   margin: 0;
   font-weight: 600;
@@ -846,6 +841,7 @@ nav {
 .session-info strong {
   font-size: 15px;
 }
+
 
 .session-time {
   font-size: 13px;
