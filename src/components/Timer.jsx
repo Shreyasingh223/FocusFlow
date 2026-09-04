@@ -11,7 +11,7 @@ function Timer({ selectedTask, completeSession }) {
   const alarmAudio = useRef(null);
 
   const durations = {
-    focus: 0.1,
+    focus: 25,
     short: 5,
     long: 15,
   };
