@@ -4,12 +4,14 @@ import { useTimer } from "../hooks/useTimer";
 function Timer({ selectedTask, completeSession }) {
   const [mode, setMode] = useState("focus");
   const [sessionCompleted, setSessionCompleted] = useState(false);
+  const [showCompletionPopup, setShowCompletionPopup] = useState(false);
 
   // Prevent the 5-minute warning from playing more than once
   const warningPlayed = useRef(false);
+  const alarmAudio = useRef(null);
 
   const durations = {
-    focus: 5.1,
+    focus: 0.1,
     short: 5,
     long: 15,
   };
@@ -27,15 +29,27 @@ function Timer({ selectedTask, completeSession }) {
   const playSound = (type) => {
     const audio = new Audio(
       type === "warning"
-        ? "/sounds/warning.mp3"
-        : "/sounds/alarm.mp3"
+        ? `${import.meta.env.BASE_URL}sounds/warning.mp3`
+        : `${import.meta.env.BASE_URL}sounds/alarm.mp3`
     );
 
     audio.volume = 0.8;
 
+    if (type === "alarm") {
+      alarmAudio.current = audio;
+    }
+
     audio.play().catch((error) => {
       console.log("Audio could not play:", error);
     });
+  };
+
+  const stopAlarm = () => {
+    if (alarmAudio.current) {
+      alarmAudio.current.pause();
+      alarmAudio.current.currentTime = 0;
+      alarmAudio.current = null;
+    }
   };
 
   // Reset completion status when task changes
@@ -52,20 +66,6 @@ function Timer({ selectedTask, completeSession }) {
   useEffect(() => {
     if (
       mode === "focus" &&
-      isRunning &&
-      minutes === 5 &&
-      remainingSeconds === 0 &&
-      !warningPlayed.current
-    ) {
-      playSound("warning");
-      warningPlayed.current = true;
-    }
-  }, [mode, minutes, remainingSeconds, isRunning]);
-
-  // ⏰ Timer completed
-  useEffect(() => {
-    if (
-      mode === "focus" &&
       minutes === 0 &&
       remainingSeconds === 0 &&
       selectedTask &&
@@ -75,6 +75,7 @@ function Timer({ selectedTask, completeSession }) {
 
       completeSession(durations.focus);
       setSessionCompleted(true);
+      setShowCompletionPopup(true);
     }
   }, [
     mode,
@@ -107,6 +108,11 @@ function Timer({ selectedTask, completeSession }) {
     focus: "Focus",
     short: "Short Break",
     long: "Long Break",
+  };
+
+  const handleCompletionOK = () => {
+    stopAlarm();
+    setShowCompletionPopup(false);
   };
 
   return (
@@ -229,6 +235,35 @@ function Timer({ selectedTask, completeSession }) {
         </button>
 
       </div>
+
+      {showCompletionPopup && (
+        <div className="completion-overlay">
+          <div className="completion-popup">
+
+            <div className="completion-icon">
+              ✓
+            </div>
+
+            <h2>Task Completed!</h2>
+
+            <p>
+              Great job! You completed your focus session.
+            </p>
+
+            <strong>
+              {selectedTask?.title}
+            </strong>
+
+            <button
+              className="completion-ok"
+              onClick={handleCompletionOK}
+            >
+              OK
+            </button>
+
+          </div>
+        </div>
+      )}
 
     </section>
   );

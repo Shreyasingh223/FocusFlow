@@ -19,7 +19,6 @@ button {
   color: #f5f5f5;
 }
 
-
 /* SIDEBAR */
 
 .sidebar {
@@ -41,7 +40,6 @@ button {
   background: #181a20;
   border-color: #282b33;
 }
-
 
 .logo {
   display: flex;
@@ -68,7 +66,6 @@ button {
 .close-sidebar {
   display: none;
 }
-
 
 /* NAVIGATION */
 
@@ -106,7 +103,6 @@ nav {
   font-weight: 600;
 }
 
-
 /* STREAK */
 
 .sidebar-bottom {
@@ -133,14 +129,12 @@ nav {
   color: #9c7a5c;
 }
 
-
 /* MAIN */
 
 .main {
   margin-left: 250px;
   width: calc(100% - 250px);
 }
-
 
 /* HEADER */
 
@@ -195,7 +189,6 @@ nav {
   font-weight: 700;
 }
 
-
 /* CONTENT */
 
 .content {
@@ -220,7 +213,6 @@ nav {
 .subtitle {
   color: #858995;
 }
-
 
 /* STATISTICS */
 
@@ -270,7 +262,6 @@ nav {
   font-size: 13px;
   color: #888b95;
 }
-
 
 /* TIMER */
 
@@ -357,8 +348,7 @@ nav {
 
 .start-button:hover {
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 25px rgba(99, 91, 255, 0.25);
+  box-shadow: 0 8px 25px rgba(99, 91, 255, 0.25);
 }
 
 .timer-settings {
@@ -376,7 +366,6 @@ nav {
   cursor: pointer;
   color: inherit;
 }
-
 
 .timer-settings button.selected-mode {
   background: #635bff;
@@ -496,7 +485,6 @@ nav {
   color: #2c9251;
 }
 
-
 /* MOBILE */
 
 .menu-button {
@@ -504,7 +492,6 @@ nav {
 }
 
 @media (max-width: 800px) {
-
   .sidebar {
     transform: translateX(-100%);
 
@@ -663,7 +650,6 @@ nav {
   transform: translateY(-1px);
 }
 
-
 /* ADD TASK BUTTON */
 
 .add-task {
@@ -671,7 +657,6 @@ nav {
   align-items: center;
   gap: 6px;
 }
-
 
 /* DELETE BUTTON */
 
@@ -698,11 +683,9 @@ nav {
   background: #ffe8e8;
 }
 
-
 /* MOBILE TASK FORM */
 
 @media (max-width: 600px) {
-
   .task-info {
     flex-direction: column;
     align-items: flex-start;
@@ -711,7 +694,6 @@ nav {
   .delete-task {
     margin-left: auto;
   }
-
 }
 
 /* SELECTED TASK */
@@ -724,7 +706,6 @@ nav {
 .dark .task.selected-task {
   background: rgba(99, 91, 255, 0.12);
 }
-
 
 /* FOCUS BUTTON */
 
@@ -842,7 +823,6 @@ nav {
   font-size: 15px;
 }
 
-
 .session-time {
   font-size: 13px;
   opacity: 0.6;
@@ -863,4 +843,124 @@ nav {
 .clear-history:hover {
   opacity: 1;
   background: rgba(255, 80, 80, 0.1);
+}
+
+/* =========================
+   Task Completion Popup
+========================= */
+
+.completion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  animation: fadeIn 0.2s ease;
+}
+
+.completion-popup {
+  width: min(90%, 420px);
+  padding: 35px 30px;
+
+  background: white;
+  border-radius: 20px;
+
+  text-align: center;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  animation: popupIn 0.3s ease;
+}
+
+.completion-icon {
+  width: 65px;
+  height: 65px;
+
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e8f7ee;
+  color: #2e9d5b;
+
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.completion-popup h2 {
+  margin: 0 0 10px;
+
+  font-size: 26px;
+}
+
+.completion-popup p {
+  margin: 0 0 15px;
+
+  color: #777;
+  line-height: 1.5;
+}
+
+.completion-popup strong {
+  display: block;
+
+  margin-bottom: 25px;
+
+  font-size: 16px;
+}
+
+.completion-ok {
+  width: 100%;
+
+  padding: 13px 20px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #222;
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.completion-ok:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+@keyframes popupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

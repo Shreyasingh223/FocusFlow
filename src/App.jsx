@@ -275,7 +275,6 @@ function App() {
           </div>
         </header>
 
-
         <section className="content">
 
           {/* Welcome */}
