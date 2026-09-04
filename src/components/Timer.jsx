@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTimer } from "../hooks/useTimer";
 
 function Timer({ selectedTask, completeSession }) {
-
   const [mode, setMode] = useState("focus");
   const [sessionCompleted, setSessionCompleted] = useState(false);
 
+  // Prevent the 5-minute warning from playing more than once
+  const warningPlayed = useRef(false);
+
   const durations = {
-    focus: 25,
+    focus: 5.1,
     short: 5,
     long: 15,
   };
@@ -21,16 +23,46 @@ function Timer({ selectedTask, completeSession }) {
     reset,
   } = useTimer(durations[mode]);
 
+  // 🔔 Play a sound
+  const playSound = (type) => {
+    const audio = new Audio(
+      type === "warning"
+        ? "/sounds/warning.mp3"
+        : "/sounds/alarm.mp3"
+    );
+
+    audio.volume = 0.8;
+
+    audio.play().catch((error) => {
+      console.log("Audio could not play:", error);
+    });
+  };
+
   // Reset completion status when task changes
   useEffect(() => {
     setSessionCompleted(false);
+    warningPlayed.current = false;
 
     if (selectedTask) {
       reset(durations.focus);
     }
   }, [selectedTask]);
 
-  // Detect completed focus session
+  // 🔔 5-minute warning
+  useEffect(() => {
+    if (
+      mode === "focus" &&
+      isRunning &&
+      minutes === 5 &&
+      remainingSeconds === 0 &&
+      !warningPlayed.current
+    ) {
+      playSound("warning");
+      warningPlayed.current = true;
+    }
+  }, [mode, minutes, remainingSeconds, isRunning]);
+
+  // ⏰ Timer completed
   useEffect(() => {
     if (
       mode === "focus" &&
@@ -39,6 +71,8 @@ function Timer({ selectedTask, completeSession }) {
       selectedTask &&
       !sessionCompleted
     ) {
+      playSound("alarm");
+
       completeSession(durations.focus);
       setSessionCompleted(true);
     }
@@ -54,11 +88,13 @@ function Timer({ selectedTask, completeSession }) {
   const changeMode = (newMode) => {
     setMode(newMode);
     setSessionCompleted(false);
+    warningPlayed.current = false;
     reset(durations[newMode]);
   };
 
   const handleReset = () => {
     setSessionCompleted(false);
+    warningPlayed.current = false;
     reset(durations[mode]);
   };
 
@@ -79,7 +115,6 @@ function Timer({ selectedTask, completeSession }) {
       <div className="timer-header">
 
         <div>
-
           <span className="timer-label">
             FOCUS SESSION
           </span>
@@ -87,7 +122,6 @@ function Timer({ selectedTask, completeSession }) {
           <h2>
             {modeName[mode]}
           </h2>
-
         </div>
 
         <span className="session-count">
@@ -98,10 +132,8 @@ function Timer({ selectedTask, completeSession }) {
 
       </div>
 
-
       {selectedTask && (
         <div className="current-task">
-
           <span>
             🎯 Focusing on
           </span>
@@ -109,10 +141,8 @@ function Timer({ selectedTask, completeSession }) {
           <strong>
             {selectedTask.title}
           </strong>
-
         </div>
       )}
-
 
       {!selectedTask && (
         <div className="current-task">
@@ -121,7 +151,6 @@ function Timer({ selectedTask, completeSession }) {
           </span>
         </div>
       )}
-
 
       <div className="timer">
 
@@ -147,7 +176,6 @@ function Timer({ selectedTask, completeSession }) {
 
       </div>
 
-
       <div className="timer-controls">
 
         {!isRunning ? (
@@ -172,7 +200,6 @@ function Timer({ selectedTask, completeSession }) {
         )}
 
       </div>
-
 
       <div className="timer-settings">
 
