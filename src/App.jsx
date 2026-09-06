@@ -256,7 +256,10 @@ function App() {
             className="menu-button"
             onClick={() => setSidebarOpen(true)}
           >
-            <Menu size={22} />
+            <Menu
+              size={22}
+              color={darkMode ? "white" : "currentColor"}
+            />
           </button>
 
           <div className="header-actions">
@@ -265,7 +268,7 @@ function App() {
               className="icon-button"
               onClick={() => setDarkMode(!darkMode)}
             >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+              {darkMode ? <Sun size={20} color="orange" /> : <Moon size={20} />}
             </button>
 
             <div className="avatar">
