@@ -21,6 +21,7 @@ import "./App.css";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activePage, setActivePage] = useState("overview");
 
   const [selectedTask, setSelectedTask] = useState(null);
 
@@ -166,6 +167,25 @@ function App() {
 
   const currentStreak = calculateStreak();
 
+  // Analytics
+  const completedTasks = tasks.filter(
+    (task) => task.completed
+  ).length;
+
+  const totalTasks = tasks.length;
+
+  const productivityRate =
+    totalTasks > 0
+      ? Math.round((completedTasks / totalTasks) * 100)
+      : 0;
+
+  const totalFocusSessions = sessions.length;
+
+  const totalFocusMinutes = sessions.reduce(
+    (total, session) => total + session.duration,
+    0
+  );
+
   // Dynamic date and greeting
   const now = new Date();
 
@@ -206,20 +226,34 @@ function App() {
         </div>
 
         <nav>
-          <a className="nav-item active">
+          <button
+            className={`nav-item ${activePage === "overview" ? "active" : ""
+              }`}
+            onClick={() => {
+              setActivePage("overview");
+              setSidebarOpen(false);
+            }}
+          >
             <LayoutDashboard size={20} />
             <span>Overview</span>
-          </a>
+          </button>
 
           <a className="nav-item">
             <CheckSquare size={20} />
             <span>Tasks</span>
           </a>
 
-          <a className="nav-item">
+          <button
+            className={`nav-item ${activePage === "analytics" ? "active" : ""
+              }`}
+            onClick={() => {
+              setActivePage("analytics");
+              setSidebarOpen(false);
+            }}
+          >
             <BarChart3 size={20} />
             <span>Analytics</span>
-          </a>
+          </button>
 
           <a className="nav-item">
             <Settings size={20} />
@@ -280,66 +314,83 @@ function App() {
 
         <section className="content">
 
-          {/* Welcome */}
-          <div className="welcome">
+          {activePage === "overview" && (
+            <>
+              {/* Welcome */}
+              <div className="welcome">
 
-            <p className="eyebrow">
-              {formattedDate.toUpperCase()}
-            </p>
+                <p className="eyebrow">
+                  {formattedDate.toUpperCase()}
+                </p>
 
-            <h1>
-              {greeting}, Shreya 👋
-            </h1>
+                <h1>
+                  {greeting}, Shreya 👋
+                </h1>
 
-            <p className="subtitle">
-              Let's make today a productive one.
-            </p>
+                <p className="subtitle">
+                  Let's make today a productive one.
+                </p>
 
-          </div>
+              </div>
 
 
-          {/* Statistics */}
-          <div className="stats">
+              {/* Statistics */}
+              <div className="stats">
 
-            <StatCard
-              icon={<ListTodo />}
-              number={tasksRemaining}
-              label="Tasks remaining"
+                <StatCard
+                  icon={<ListTodo />}
+                  number={tasksRemaining}
+                  label="Tasks remaining"
+                />
+
+                <StatCard
+                  icon={<Clock3 />}
+                  number={formattedFocusTime}
+                  label="Focus time"
+                />
+
+                <StatCard
+                  icon={<Flame />}
+                  number={currentStreak}
+                  label="Day streak"
+                />
+
+              </div>
+
+
+              {/* Timer */}
+              <Timer
+                selectedTask={currentTask}
+                completeSession={completeSession}
+              />
+
+
+              {/* Tasks */}
+              <TaskList
+                tasks={tasks}
+                setTasks={setTasks}
+                selectedTask={selectedTask}
+                setSelectedTask={setSelectedTask}
+              />
+
+              {/* Session History */}
+              <SessionHistory
+                sessions={sessions}
+                clearHistory={clearHistory}
+              />
+            </>
+          )}
+
+
+          {activePage === "analytics" && (
+            <Analytics
+              sessions={sessions}
+              tasks={tasks}
+              completedTasks={completedTasks}
+              totalTasks={totalTasks}
+              productivityRate={productivityRate}
             />
-
-            <StatCard
-              icon={<Clock3 />}
-              number={formattedFocusTime}
-              label="Focus time"
-            />
-
-            <StatCard
-              icon={<Flame />}
-              number={currentStreak}
-              label="Day streak"
-            />
-
-          </div>
-
-
-          {/* Timer */}
-          <Timer
-            selectedTask={currentTask}
-            completeSession={completeSession}
-          />
-
-
-          {/* Tasks */}
-          <TaskList
-            tasks={tasks}
-            setTasks={setTasks}
-            selectedTask={selectedTask}
-            setSelectedTask={setSelectedTask}
-          />
-          <SessionHistory
-            sessions={sessions}
-            clearHistory={clearHistory}
-          />
+          )}
 
         </section>
 
@@ -483,6 +534,265 @@ function SessionHistory({ sessions, clearHistory }) {
       )}
 
     </section>
+  );
+}
+
+function getLastSevenDays(sessions) {
+  const days = [];
+
+  for (let i = 6; i >= 0; i--) {
+
+    const date = new Date();
+
+    date.setDate(date.getDate() - i);
+
+    const dateKey = date.toLocaleDateString();
+
+    const daySessions = sessions.filter(
+      (session) =>
+        new Date(
+          session.completedAt
+        ).toLocaleDateString() === dateKey
+    );
+
+    days.push({
+      date: dateKey,
+
+      label: date.toLocaleDateString("en-US", {
+        weekday: "short",
+      }),
+
+      sessions: daySessions.length,
+    });
+  }
+
+  return days;
+}
+
+function Analytics({
+  sessions,
+  tasks,
+  completedTasks,
+  totalTasks,
+  productivityRate,
+}) {
+  const totalFocusMinutes = sessions.reduce(
+    (total, session) => total + session.duration,
+    0
+  );
+
+  const focusHours = Math.floor(totalFocusMinutes / 60);
+  const focusMinutes = totalFocusMinutes % 60;
+
+  const formatFocusTime = () => {
+    if (focusHours > 0) {
+      return `${focusHours}h ${focusMinutes}m`;
+    }
+
+    return `${focusMinutes}m`;
+  };
+
+  return (
+    <div className="analytics-page">
+
+      {/* Page Header */}
+      <div className="analytics-header">
+
+        <div>
+          <p className="eyebrow">
+            PRODUCTIVITY INSIGHTS
+          </p>
+
+          <h1>
+            Your Analytics 📊
+          </h1>
+
+          <p>
+            Track your progress and understand your
+            productivity patterns.
+          </p>
+        </div>
+
+      </div>
+
+
+      {/* Main Statistics */}
+      <div className="analytics-stats">
+
+        <div className="analytics-card">
+
+          <div className="analytics-card-top">
+            <span>Focus Sessions</span>
+            <div className="analytics-icon">
+              🍅
+            </div>
+          </div>
+
+          <strong>
+            {sessions.length}
+          </strong>
+
+          <p>
+            completed sessions
+          </p>
+
+        </div>
+
+
+        <div className="analytics-card">
+
+          <div className="analytics-card-top">
+            <span>Focus Time</span>
+            <div className="analytics-icon">
+              ⏱️
+            </div>
+          </div>
+
+          <strong>
+            {formatFocusTime()}
+          </strong>
+
+          <p>
+            total focused time
+          </p>
+
+        </div>
+
+
+        <div className="analytics-card">
+
+          <div className="analytics-card-top">
+            <span>Tasks Completed</span>
+            <div className="analytics-icon">
+              ✅
+            </div>
+          </div>
+
+          <strong>
+            {completedTasks}
+          </strong>
+
+          <p>
+            out of {totalTasks} tasks
+          </p>
+
+        </div>
+
+
+        <div className="analytics-card">
+
+          <div className="analytics-card-top">
+            <span>Productivity</span>
+            <div className="analytics-icon">
+              📈
+            </div>
+          </div>
+
+          <strong>
+            {productivityRate}%
+          </strong>
+
+          <p>
+            task completion rate
+          </p>
+
+        </div>
+
+      </div>
+
+
+      {/* Weekly Activity */}
+      <div className="analytics-panel">
+
+        <div className="analytics-panel-header">
+
+          <div>
+            <h2>Focus Activity</h2>
+
+            <p>
+              Your recent focus sessions
+            </p>
+          </div>
+
+          <span className="analytics-badge">
+            Last 7 days
+          </span>
+
+        </div>
+
+
+        <div className="activity-chart">
+
+          {getLastSevenDays(sessions).map((day) => (
+
+            <div
+              className="activity-day"
+              key={day.date}
+            >
+
+              <div className="activity-bar-container">
+
+                <div
+                  className="activity-bar"
+                  style={{
+                    height: `${Math.max(
+                      day.sessions * 35,
+                      day.sessions > 0 ? 35 : 8
+                    )}px`,
+                  }}
+                >
+                  {day.sessions > 0 && (
+                    <span>
+                      {day.sessions}
+                    </span>
+                  )}
+                </div>
+
+              </div>
+
+              <span className="activity-label">
+                {day.label}
+              </span>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </div>
+
+
+      {/* Productivity Summary */}
+      <div className="analytics-summary">
+
+        <div className="summary-content">
+
+          <span className="summary-icon">
+            🎯
+          </span>
+
+          <div>
+            <h3>
+              Keep building your momentum
+            </h3>
+
+            <p>
+              You have completed {completedTasks} of{" "}
+              {totalTasks} tasks and finished{" "}
+              {sessions.length} focus sessions.
+            </p>
+          </div>
+
+        </div>
+
+        <div className="summary-percentage">
+          {productivityRate}%
+        </div>
+
+      </div>
+
+    </div>
   );
 }
 
