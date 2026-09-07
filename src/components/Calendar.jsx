@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
     ChevronLeft,
     ChevronRight,
     Plus,
     Trash2,
     CalendarDays,
-} from 'lucide-react';
+} from "lucide-react";
 
 import "./Calendar.css";
 
-function Calender() {
+function Calendar() {
     const today = new Date();
 
     const [currentDate, setCurrentDate] = useState(
@@ -21,8 +21,12 @@ function Calender() {
     );
 
     const [reminders, setReminders] = useState(() => {
-        const savedReminders = localStorage.getItem("focusflow-reminders");
-        return savedReminders ? JSON.parse(savedReminders) : [];
+        const savedReminders =
+            localStorage.getItem("focusflow-reminders");
+
+        return savedReminders
+            ? JSON.parse(savedReminders)
+            : [];
     });
 
     const [showForm, setShowForm] = useState(false);
@@ -34,28 +38,36 @@ function Calender() {
     // Save reminders
     const saveReminders = (updatedReminders) => {
         setReminders(updatedReminders);
-        localStorage.setItem("focusflow-reminders", JSON.stringify(updatedReminders));
+
+        localStorage.setItem(
+            "focusflow-reminders",
+            JSON.stringify(updatedReminders)
+        );
     };
 
     // Previous month
-    const prevMonth = () => {
-        setCurrentDate(new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth() - 1,
-            1
-        ));
+    const previousMonth = () => {
+        setCurrentDate(
+            new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth() - 1,
+                1
+            )
+        );
     };
 
     // Next month
     const nextMonth = () => {
-        setCurrentDate(new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth() + 1,
-            1
-        ));
+        setCurrentDate(
+            new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth() + 1,
+                1
+            )
+        );
     };
 
-    // go to today
+    // Go to today
     const goToToday = () => {
         const todayDate = new Date();
 
@@ -66,6 +78,7 @@ function Calender() {
                 1
             )
         );
+
         setSelectedDate(formatDate(todayDate));
     };
 
@@ -96,31 +109,49 @@ function Calender() {
 
     // Delete reminder
     const deleteReminder = (id) => {
-        const updatedReminders = reminders.filter((reminder) => reminder.id !== id);
+        const updatedReminders = reminders.filter(
+            (reminder) => reminder.id !== id
+        );
+
         saveReminders(updatedReminders);
     };
 
-    // Calender information
+    // Calendar information
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
+
     const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const daysInMonth = new Date(
+        year,
+        month + 1,
+        0
+    ).getDate();
 
     const calendarDays = [];
 
-    // Empty space before the first day of the month
+    // Empty spaces before first day
     for (let i = 0; i < firstDay; i++) {
         calendarDays.push(null);
     }
 
-    //Actual days of the month
+    // Actual days
     for (let day = 1; day <= daysInMonth; day++) {
         calendarDays.push(day);
     }
 
-    const selectedReminders = reminders.filter((reminder) => reminder.date === selectedDate);
+    const selectedReminders = reminders.filter(
+        (reminder) =>
+            reminder.date === selectedDate
+    );
 
-    const monthName = currentDate.toLocaleString("en-US", { month: "long", year: "numeric" });
+    const monthName = currentDate.toLocaleDateString(
+        "en-US",
+        {
+            month: "long",
+            year: "numeric",
+        }
+    );
 
     return (
         <div className="calendar-page">
@@ -135,7 +166,7 @@ function Calender() {
                     </p>
 
                     <h1>
-                        Calendar 📅
+                        Calendar
                     </h1>
 
                     <p>
@@ -467,4 +498,4 @@ function formatDisplayDate(dateString) {
     );
 }
 
-export default Calender;
+export default Calendar;

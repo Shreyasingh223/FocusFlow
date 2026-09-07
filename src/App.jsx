@@ -338,7 +338,7 @@ function App() {
                 </p>
 
                 <h1>
-                  {greeting}, Shreya 👋
+                  {greeting}, Shreya
                 </h1>
 
                 <p className="subtitle">
@@ -622,7 +622,7 @@ function Analytics({
           </p>
 
           <h1>
-            Your Analytics 📊
+            Your Analytics
           </h1>
 
           <p>
