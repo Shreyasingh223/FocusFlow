@@ -1,0 +1,397 @@
+/* ========================= */
+/* Calendar Page */
+/* ========================= */
+
+.calendar-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.calendar-header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.calendar-header p:last-child {
+  margin: 8px 0 0;
+  color: #7c8493;
+}
+
+.today-button {
+  border: none;
+  padding: 11px 20px;
+  border-radius: 10px;
+  background: #6657f5;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.today-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+/* Layout */
+
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+/* Calendar */
+
+.calendar-card,
+.reminder-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.calendar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.calendar-top h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.calendar-nav {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.calendar-nav:hover {
+  background: #f5f3ff;
+  color: #6657f5;
+}
+
+/* Weekdays */
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-weekdays {
+  margin-bottom: 10px;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Days */
+
+.calendar-day {
+  position: relative;
+  height: 58px;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.calendar-day:hover {
+  background: #f5f3ff;
+}
+
+.calendar-day.today {
+  color: #6657f5;
+  font-weight: 700;
+}
+
+.calendar-day.selected {
+  background: #6657f5;
+  color: white;
+}
+
+.calendar-day.empty {
+  cursor: default;
+}
+
+.calendar-day.empty:hover {
+  background: transparent;
+}
+
+/* Reminder dot */
+
+.reminder-dot {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  background: #ff8a4c;
+  border-radius: 50%;
+}
+
+.calendar-day.selected .reminder-dot {
+  background: white;
+}
+
+/* ========================= */
+/* Reminders */
+/* ========================= */
+
+.reminder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.reminder-header h2 {
+  margin: 5px 0 0;
+  font-size: 22px;
+}
+
+.reminder-date {
+  font-size: 13px;
+  color: #8b93a3;
+}
+
+.add-reminder-button {
+  border: none;
+  background: #6657f5;
+  color: white;
+  padding: 9px 14px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Form */
+
+.reminder-form {
+  padding: 16px;
+  background: #f8f8fc;
+  border-radius: 14px;
+  margin-bottom: 18px;
+}
+
+.reminder-form input,
+.reminder-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e1e3e8;
+  border-radius: 9px;
+  padding: 11px 12px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  background: white;
+  outline: none;
+}
+
+.reminder-form input:focus,
+.reminder-form textarea:focus {
+  border-color: #6657f5;
+}
+
+.reminder-form textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.form-actions button {
+  border: none;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.form-actions button:first-child {
+  background: #e9e9ee;
+}
+
+.form-actions button:last-child {
+  background: #6657f5;
+  color: white;
+}
+
+/* Reminder items */
+
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 15px;
+  border: 1px solid #ececf0;
+  border-radius: 13px;
+}
+
+.reminder-time {
+  min-width: 55px;
+  color: #6657f5;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reminder-content {
+  flex: 1;
+}
+
+.reminder-content strong {
+  display: block;
+  font-size: 14px;
+}
+
+.reminder-content p {
+  margin: 5px 0 0;
+  color: #8a91a0;
+  font-size: 13px;
+}
+
+.delete-reminder {
+  border: none;
+  background: transparent;
+  color: #a0a5ae;
+  cursor: pointer;
+}
+
+.delete-reminder:hover {
+  color: #ef4444;
+}
+
+/* Empty */
+
+.no-reminders {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.no-reminders svg {
+  margin-bottom: 12px;
+  color: #c8cbd3;
+}
+
+.no-reminders strong {
+  color: #4b5563;
+}
+
+.no-reminders p {
+  margin: 5px 0 0;
+  font-size: 13px;
+}
+
+/* ========================= */
+/* Dark mode */
+/* ========================= */
+
+.app.dark .calendar-card,
+.app.dark .reminder-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.app.dark .calendar-nav {
+  background: #1f2937;
+  border-color: #374151;
+  color: white;
+}
+
+.app.dark .calendar-day:hover {
+  background: #312e55;
+}
+
+.app.dark .reminder-form {
+  background: #111827;
+}
+
+.app.dark .reminder-form input,
+.app.dark .reminder-form textarea {
+  background: #1f2937;
+  color: white;
+  border-color: #374151;
+}
+
+.app.dark .reminder-item {
+  border-color: #374151;
+}
+
+.app.dark .no-reminders strong {
+  color: #e5e7eb;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .calendar-header {
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .calendar-header h1 {
+    font-size: 28px;
+  }
+
+  .calendar-card,
+  .reminder-card {
+    padding: 18px;
+  }
+
+  .calendar-day {
+    height: 48px;
+  }
+}
