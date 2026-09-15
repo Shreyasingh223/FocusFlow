@@ -1,0 +1,422 @@
+/* Resources Page */
+
+.resources-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+
+.resources-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+}
+
+.resources-header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.resources-header p:last-child {
+  margin: 8px 0 0;
+  color: #7c8493;
+}
+
+.add-resource-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  border: none;
+  background: #6657f5;
+  color: white;
+
+  padding: 11px 17px;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.add-resource-button:hover {
+  opacity: 0.9;
+}
+
+/* Upload Form */
+
+.resource-form {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 25px;
+
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.form-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.form-title svg {
+  color: #6657f5;
+}
+
+.form-title h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.resource-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.resource-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.resource-input-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555d6d;
+}
+
+.resource-input-group input,
+.resource-input-group select {
+  box-sizing: border-box;
+  width: 100%;
+
+  padding: 11px 12px;
+
+  border: 1px solid #dfe1e7;
+  border-radius: 9px;
+
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.resource-input-group input:focus,
+.resource-input-group select:focus {
+  border-color: #6657f5;
+}
+
+.selected-file {
+  color: #6657f5;
+  margin-top: -8px;
+}
+
+.resource-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.resource-form-actions button {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cancel-resource {
+  background: #eeeef2;
+}
+
+.save-resource {
+  background: #6657f5;
+  color: white;
+}
+
+/* Resource Count */
+
+.resource-count {
+  color: #8a91a0;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* Resource Grid */
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.resource-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+
+  padding: 20px;
+
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.resource-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+/* Card top */
+
+.resource-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.resource-file-icon {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 13px;
+
+  background: #f1efff;
+  color: #6657f5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-resource {
+  border: none;
+  background: transparent;
+
+  color: #a0a5ae;
+
+  cursor: pointer;
+}
+
+.delete-resource:hover {
+  color: #ef4444;
+}
+
+/* Info */
+
+.resource-info {
+  margin-top: 18px;
+}
+
+.resource-category {
+  display: inline-block;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  background: #f5f3ff;
+  color: #6657f5;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.resource-info h3 {
+  margin: 12px 0 5px;
+
+  font-size: 17px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resource-info p {
+  margin: 0;
+
+  color: #9298a5;
+
+  font-size: 12px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* View button */
+
+.view-resource {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 10px;
+
+  border: 1px solid #e2e3e8;
+  background: #ffffff;
+
+  color: #6657f5;
+
+  border-radius: 9px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  font-weight: 600;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.view-resource:hover {
+  background: #f5f3ff;
+}
+
+/* Empty State */
+
+.empty-resources {
+  background: #ffffff;
+
+  border: 1px dashed #d9dbe2;
+  border-radius: 20px;
+
+  min-height: 350px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 30px;
+}
+
+.empty-resource-icon {
+  width: 65px;
+  height: 65px;
+
+  border-radius: 18px;
+
+  background: #f1efff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 30px;
+
+  margin-bottom: 15px;
+}
+
+.empty-resources h2 {
+  margin: 0;
+}
+
+.empty-resources p {
+  max-width: 430px;
+
+  color: #8a91a0;
+
+  line-height: 1.6;
+}
+
+.empty-resources button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  border: none;
+
+  background: #6657f5;
+  color: white;
+
+  padding: 10px 15px;
+
+  border-radius: 9px;
+
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Dark Mode */
+
+.app.dark .resource-form,
+.app.dark .resource-card,
+.app.dark .empty-resources {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.app.dark .resource-input-group label {
+  color: #d1d5db;
+}
+
+.app.dark .resource-input-group input,
+.app.dark .resource-input-group select {
+  background: #111827;
+  color: white;
+  border-color: #374151;
+}
+
+.app.dark .resource-info p {
+  color: #9ca3af;
+}
+
+.app.dark .view-resource {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.app.dark .view-resource:hover {
+  background: #312e55;
+}
+
+.app.dark .empty-resources {
+  border-color: #4b5563;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .resources-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .resources-header {
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .resources-header h1 {
+    font-size: 28px;
+  }
+
+  .resource-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .resources-grid {
+    grid-template-columns: 1fr;
+  }
+}

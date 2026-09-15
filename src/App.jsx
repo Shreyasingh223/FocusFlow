@@ -1,6 +1,7 @@
 import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 import Calendar from "./components/Calendar";
+import Resources from "./components/Resources";
 
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -16,6 +17,7 @@ import {
   Menu,
   X,
   CalendarDays,
+  FolderOpen,
 } from "lucide-react";
 
 import "./App.css";
@@ -269,6 +271,18 @@ function App() {
             <span>Calendar</span>
           </button>
 
+          <button
+            className={`nav-item ${activePage === "resources" ? "active" : ""
+              }`}
+            onClick={() => {
+              setActivePage("resources");
+              setSidebarOpen(false);
+            }}
+          >
+            <FolderOpen size={20} />
+            <span>Resources</span>
+          </button>
+
           <a className="nav-item">
             <Settings size={20} />
             <span>Settings</span>
@@ -408,6 +422,10 @@ function App() {
 
           {activePage === "calendar" && (
             <Calendar />
+          )}
+
+          {activePage === "resources" && (
+            <Resources />
           )}
 
         </section>
