@@ -9,14 +9,14 @@ button {
 .app {
   min-height: 100vh;
   display: flex;
-  background: #f7f8fc;
-  color: #171923;
+  background: #fff7fa;
+  color: #32151d;
   transition: 0.3s;
 }
 
 .app.dark {
-  background: #111318;
-  color: #f5f5f5;
+  background: #1b1115;
+  color: #fff5f8;
 }
 
 .sun-icon {
@@ -28,8 +28,8 @@ button {
 .sidebar {
   width: 250px;
   min-height: 100vh;
-  background: white;
-  border-right: 1px solid #e8e8ee;
+  background: #ffffff;
+  border-right: 1px solid #f0d9df;
   padding: 28px 18px;
   display: flex;
   flex-direction: column;
@@ -41,8 +41,8 @@ button {
 }
 
 .dark .sidebar {
-  background: #181a20;
-  border-color: #282b33;
+  background: #291a10;
+  border-color: #453038;
 }
 
 .logo {
@@ -58,7 +58,7 @@ button {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #6c63ff;
+  background: #7d0921;
   color: white;
 
   display: grid;
@@ -88,7 +88,7 @@ nav {
 
   border-radius: 10px;
 
-  color: #727582;
+  color: #80656c;
   text-decoration: none;
 
   cursor: pointer;
@@ -97,13 +97,13 @@ nav {
 }
 
 .nav-item:hover {
-  background: #f1f1f7;
-  color: #171923;
+  background: #fff0f4;
+  color: #941638;
 }
 
 .nav-item.active {
-  background: #eeecff;
-  color: #635bff;
+  background: #ffe8f0;
+  color: #7d0921;
   font-weight: 600;
 }
 
@@ -114,12 +114,12 @@ nav {
 }
 
 .streak-box {
-  background: #fff4e8;
+  background: #fff1e8;
   border-radius: 14px;
   padding: 15px;
   display: flex;
   gap: 12px;
-  color: #e47a18;
+  color: #d86a32;
 }
 
 .streak-box div {
@@ -130,7 +130,7 @@ nav {
 
 .streak-box span {
   font-size: 12px;
-  color: #9c7a5c;
+  color: #9b7666;
 }
 
 /* MAIN */
@@ -145,7 +145,7 @@ nav {
 .header {
   height: 75px;
   background: white;
-  border-bottom: 1px solid #e8e8ee;
+  border-bottom: 1px solid #f0d9df;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -153,8 +153,8 @@ nav {
 }
 
 .dark .header {
-  background: #181a20;
-  border-color: #282b33;
+  background: rgba(41, 26, 32, 0.96);
+  border-color: #453038;
 }
 
 .header-actions {
@@ -179,7 +179,8 @@ nav {
 }
 
 .icon-button:hover {
-  background: #f1f1f5;
+  background: #fff0f4;
+  color: #7d0921;
 }
 
 .avatar {
@@ -187,7 +188,7 @@ nav {
   height: 38px;
   border-radius: 50%;
   background: #dedcff;
-  color: #5149c8;
+  color: #7d0921;
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -204,7 +205,7 @@ nav {
 .eyebrow {
   font-size: 11px;
   letter-spacing: 2px;
-  color: #8a8e99;
+  color: #7d0921;
   font-weight: 700;
   margin-bottom: 10px;
 }
@@ -215,7 +216,7 @@ nav {
 }
 
 .subtitle {
-  color: #858995;
+  color: #7d0921;
 }
 
 /* STATISTICS */
@@ -247,7 +248,7 @@ nav {
   height: 45px;
   border-radius: 12px;
   background: #eeecff;
-  color: #635bff;
+  color: #7d0921;
   display: grid;
   place-items: center;
 }
@@ -264,7 +265,7 @@ nav {
 
 .stat-card span {
   font-size: 13px;
-  color: #888b95;
+  color: #bd3c56;
 }
 
 /* TIMER */
@@ -290,7 +291,7 @@ nav {
 .timer-label {
   font-size: 11px;
   letter-spacing: 1.5px;
-  color: #8a8e99;
+  color: #bd3c56;
 }
 
 .timer-header h2 {
@@ -299,7 +300,7 @@ nav {
 
 .session-count {
   font-size: 13px;
-  color: #858995;
+  color: #bd3c56;
 }
 
 .timer {
@@ -324,7 +325,7 @@ nav {
 }
 
 .timer-mode {
-  color: #8a8e99;
+  color: #bd3c56;
   font-size: 13px;
 }
 
@@ -332,6 +333,7 @@ nav {
   font-size: 55px;
   font-weight: 700;
   letter-spacing: -2px;
+  color: #7d0921;
 }
 
 .timer-controls {
@@ -341,7 +343,7 @@ nav {
 
 .start-button {
   border: none;
-  background: #635bff;
+  background: #7d0921;
   color: white;
   padding: 14px 28px;
   border-radius: 12px;
@@ -372,9 +374,9 @@ nav {
 }
 
 .timer-settings button.selected-mode {
-  background: #635bff;
+  background: #7d0921;
   color: white;
-  border-color: #635bff;
+  border-color: #7d0921;
 }
 
 /* TASKS */
@@ -390,14 +392,14 @@ nav {
 }
 
 .section-header p {
-  color: #8a8e99;
+  color: #bd3c56;
   font-size: 13px;
   margin-top: 5px;
 }
 
 .add-task {
   border: none;
-  background: #635bff;
+  background: #7d0921;
   color: white;
   padding: 10px 16px;
   border-radius: 9px;
@@ -461,9 +463,9 @@ nav {
 }
 
 .completed .checkbox {
-  background: #635bff;
+  background: #7d0921;
 
-  border-color: #635bff;
+  border-color: #7d0921;
 }
 
 .priority {
@@ -486,7 +488,7 @@ nav {
 
 .priority.low {
   background: #e5f7ec;
-  color: #2c9251;
+  color: #922c2c;
 }
 
 /* MOBILE */
@@ -625,7 +627,7 @@ nav {
 
 .task-form input:focus,
 .task-form select:focus {
-  border-color: #635bff;
+  border-color: #941638;
 }
 
 .task-form select option {
@@ -635,7 +637,7 @@ nav {
 .save-task {
   border: none;
 
-  background: #635bff;
+  background: #7d0921;
   color: white;
 
   padding: 12px;
@@ -668,7 +670,7 @@ nav {
   border: none;
   background: transparent;
 
-  color: #9a9ca5;
+  color: #bd3c56;
 
   cursor: pointer;
 
@@ -703,12 +705,12 @@ nav {
 /* SELECTED TASK */
 
 .task.selected-task {
-  border: 1px solid #635bff;
-  background: rgba(99, 91, 255, 0.05);
+  border: 1px solid #941638;
+  background: rgba(148, 22, 56, 0.05);
 }
 
 .dark .task.selected-task {
-  background: rgba(99, 91, 255, 0.12);
+  background: rgba(148, 22, 56, 0.12);
 }
 
 /* FOCUS BUTTON */
@@ -717,7 +719,7 @@ nav {
   border: none;
   background: transparent;
 
-  color: #635bff;
+  color: #941638;
 
   font-size: 12px;
   font-weight: 600;
@@ -732,7 +734,7 @@ nav {
 }
 
 .focus-task:hover {
-  background: rgba(99, 91, 255, 0.1);
+  background: rgba(148, 22, 56, 0.1);
 }
 
 .current-task {
@@ -745,7 +747,7 @@ nav {
 
   border-radius: 10px;
 
-  background: rgba(99, 91, 255, 0.08);
+  background: rgba(148, 22, 56, 0.08);
 }
 
 .current-task span {
@@ -807,7 +809,7 @@ nav {
   gap: 14px;
   padding: 14px;
   border-radius: 12px;
-  background: rgba(128, 128, 128, 0.08);
+  background: rgba(148, 22, 56, 0.08);
 }
 
 .session-icon {
@@ -817,8 +819,9 @@ nav {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(128, 128, 128, 0.12);
+  background: rgba(148, 22, 56, 0.12);
   font-size: 20px;
+  color: #7d0921;
 }
 
 .session-info {
@@ -851,7 +854,8 @@ nav {
 
 .clear-history:hover {
   opacity: 1;
-  background: rgba(255, 80, 80, 0.1);
+  color: #7d0921;
+  background: rgba(148, 22, 56, 0.1);
 }
 
 /* =========================
@@ -899,7 +903,7 @@ nav {
   border-radius: 50%;
 
   background: #e8f7ee;
-  color: #2e9d5b;
+  color: #922c2c;
 
   font-size: 32px;
   font-weight: bold;
@@ -934,7 +938,7 @@ nav {
   border: none;
   border-radius: 10px;
 
-  background: #222;
+  background: #7d0921;
   color: white;
 
   font-size: 16px;
@@ -1098,7 +1102,7 @@ nav {
 .analytics-badge {
   padding: 8px 13px;
   background: #f1efff;
-  color: #635bdb;
+  color: #941638;
   border-radius: 20px;
   font-size: 13px;
 }
@@ -1133,7 +1137,7 @@ nav {
 .activity-bar {
   min-height: 8px;
   width: 38px;
-  background: #6657f5;
+  background: #941638;
   border-radius: 9px 9px 0 0;
   display: flex;
   align-items: flex-start;
@@ -1158,7 +1162,7 @@ nav {
 /* Summary */
 
 .analytics-summary {
-  background: #f5f3ff;
+  background: #ffffff;
   border: 1px solid #e4e0ff;
   border-radius: 18px;
   padding: 22px 26px;

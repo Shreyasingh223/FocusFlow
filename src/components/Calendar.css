@@ -21,18 +21,19 @@
   margin: 0;
   font-size: 36px;
   font-weight: 700;
+  color: #32151d;
 }
 
 .calendar-header p:last-child {
   margin: 8px 0 0;
-  color: #7c8493;
+  color: #941638;
 }
 
 .today-button {
   border: none;
   padding: 11px 20px;
   border-radius: 10px;
-  background: #6657f5;
+  background: #7d0921;
   color: white;
   font-size: 14px;
   font-weight: 600;
@@ -58,7 +59,7 @@
 .calendar-card,
 .reminder-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f0d9df;
   border-radius: 20px;
   padding: 26px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
@@ -89,8 +90,8 @@
 }
 
 .calendar-nav:hover {
-  background: #f5f3ff;
-  color: #6657f5;
+  background: #ffe8f0;
+  color: #7d0921;
 }
 
 /* Weekdays */
@@ -127,16 +128,16 @@
 }
 
 .calendar-day:hover {
-  background: #f5f3ff;
+  background: #ffe8f0;
 }
 
 .calendar-day.today {
-  color: #6657f5;
+  color: #7d0921;
   font-weight: 700;
 }
 
 .calendar-day.selected {
-  background: #6657f5;
+  background: #7d0921;
   color: white;
 }
 
@@ -188,7 +189,7 @@
 
 .add-reminder-button {
   border: none;
-  background: #6657f5;
+  background: #7d0921;
   color: white;
   padding: 9px 14px;
   border-radius: 9px;
@@ -224,7 +225,7 @@
 
 .reminder-form input:focus,
 .reminder-form textarea:focus {
-  border-color: #6657f5;
+  border-color: #7d0921;
 }
 
 .reminder-form textarea {
@@ -249,7 +250,7 @@
 }
 
 .form-actions button:last-child {
-  background: #6657f5;
+  background: #7d0921;
   color: white;
 }
 
@@ -272,7 +273,7 @@
 
 .reminder-time {
   min-width: 55px;
-  color: #6657f5;
+  color: #7d0921;
   font-size: 13px;
   font-weight: 700;
 }

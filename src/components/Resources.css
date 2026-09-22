@@ -32,7 +32,7 @@
   gap: 7px;
 
   border: none;
-  background: #6657f5;
+  background: #941638;
   color: white;
 
   padding: 11px 17px;
@@ -68,7 +68,7 @@
 }
 
 .form-title svg {
-  color: #6657f5;
+  color: #941638;
 }
 
 .form-title h2 {
@@ -114,11 +114,11 @@
 
 .resource-input-group input:focus,
 .resource-input-group select:focus {
-  border-color: #6657f5;
+  border-color: #941638;
 }
 
 .selected-file {
-  color: #6657f5;
+  color: #941638;
   margin-top: -8px;
 }
 
@@ -141,7 +141,7 @@
 }
 
 .save-resource {
-  background: #6657f5;
+  background: #941638;
   color: white;
 }
 
@@ -195,7 +195,7 @@
   border-radius: 13px;
 
   background: #f1efff;
-  color: #6657f5;
+  color: #941638;
 
   display: flex;
   align-items: center;
@@ -229,7 +229,7 @@
   border-radius: 20px;
 
   background: #f5f3ff;
-  color: #6657f5;
+  color: #941638;
 
   font-size: 11px;
   font-weight: 600;
@@ -269,7 +269,7 @@
   border: 1px solid #e2e3e8;
   background: #ffffff;
 
-  color: #6657f5;
+  color: #941638;
 
   border-radius: 9px;
 
@@ -345,7 +345,7 @@
 
   border: none;
 
-  background: #6657f5;
+  background: #941638;
   color: white;
 
   padding: 10px 15px;

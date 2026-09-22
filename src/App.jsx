@@ -1,3 +1,4 @@
+import LandingPage from "./components/LandingPage";
 import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 import Calendar from "./components/Calendar";
@@ -25,6 +26,7 @@ import "./App.css";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState("landing");
   const [activePage, setActivePage] = useState("overview");
 
   const [selectedTask, setSelectedTask] = useState(null);
@@ -211,7 +213,18 @@ function App() {
     day: "numeric",
   });
 
+
+  if (currentPage === "landing") {
+    return (
+      <LandingPage
+        onGetStarted={() => setCurrentPage("signup")}
+        onLogin={() => setCurrentPage("login")}
+      />
+    );
+  }
   return (
+
+
     <div className={darkMode ? "app dark" : "app"}>
 
       {/* Sidebar */}
