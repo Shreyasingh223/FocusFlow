@@ -37,7 +37,7 @@
 .landing-nav-links {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 100px;
 }
 
 .landing-nav-links a {
