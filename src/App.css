@@ -247,7 +247,7 @@ nav {
   width: 45px;
   height: 45px;
   border-radius: 12px;
-  background: #eeecff;
+  background: #ffe8f0;
   color: #7d0921;
   display: grid;
   place-items: center;
@@ -313,7 +313,7 @@ nav {
   width: 350px;
   height: 250px;
   border-radius: 20%;
-  border: 10px solid #eeecff;
+  border: 10px solid #ffe8f0;
   display: grid;
   place-items: center;
 }
@@ -1019,7 +1019,7 @@ nav {
 
 .analytics-header p:last-child {
   margin-top: 8px;
-  color: #7c8493;
+  color: #941638;
   font-size: 16px;
 }
 
@@ -1052,7 +1052,7 @@ nav {
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: #f1efff;
+  background: #ffe8f0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1076,7 +1076,7 @@ nav {
 
 .analytics-panel {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ffe8f0;
   border-radius: 18px;
   padding: 26px;
   margin-bottom: 24px;
@@ -1101,7 +1101,7 @@ nav {
 
 .analytics-badge {
   padding: 8px 13px;
-  background: #f1efff;
+  background: #ffe8f0;
   color: #941638;
   border-radius: 20px;
   font-size: 13px;

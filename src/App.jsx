@@ -231,7 +231,7 @@ function App() {
       <aside className={sidebarOpen ? "sidebar open" : "sidebar"}>
 
         <div className="logo">
-          <div className="logo-icon">F</div>
+          <div className="logo-icon">✦</div>
           <span>FocusFlow</span>
 
           <button
