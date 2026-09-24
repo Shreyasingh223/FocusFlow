@@ -21,7 +21,6 @@ function LandingPage({ onGetStarted, onLogin }) {
         </div>
 
         <div className="landing-nav-links">
-            
           <a href="#features">Features</a>
           <a href="#about">About</a>
 
