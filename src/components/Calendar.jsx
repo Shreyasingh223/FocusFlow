@@ -12,6 +12,9 @@ import "./Calendar.css";
 function Calendar() {
     const today = new Date();
 
+    const savedUser = localStorage.getItem("focusflow-user");
+    const user = savedUser ? JSON.parse(savedUser) : null;
+    
     const [currentDate, setCurrentDate] = useState(
         new Date(today.getFullYear(), today.getMonth(), 1)
     );
@@ -21,8 +24,17 @@ function Calendar() {
     );
 
     const [reminders, setReminders] = useState(() => {
-        const savedReminders =
-            localStorage.getItem("focusflow-reminders");
+        const savedUser = localStorage.getItem("focusflow-user");
+
+        if (!savedUser) {
+            return [];
+        }
+
+        const loggedInUser = JSON.parse(savedUser);
+
+        const savedReminders = localStorage.getItem(
+            `focusflow-reminders-${loggedInUser.id}`
+        );
 
         return savedReminders
             ? JSON.parse(savedReminders)
@@ -35,12 +47,14 @@ function Calendar() {
     const [time, setTime] = useState("");
     const [description, setDescription] = useState("");
 
-    // Save reminders
+    // Save reminders for logged-in user
     const saveReminders = (updatedReminders) => {
         setReminders(updatedReminders);
 
+        if (!user) return;
+
         localStorage.setItem(
-            "focusflow-reminders",
+            `focusflow-reminders-${user.id}`,
             JSON.stringify(updatedReminders)
         );
     };

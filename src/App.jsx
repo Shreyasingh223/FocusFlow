@@ -1,4 +1,6 @@
 import LandingPage from "./components/LandingPage";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
 import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 import Calendar from "./components/Calendar";
@@ -19,6 +21,7 @@ import {
   X,
   CalendarDays,
   FolderOpen,
+  LogOut,
 } from "lucide-react";
 
 import "./App.css";
@@ -26,13 +29,48 @@ import "./App.css";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState("landing");
+  const [currentPage, setCurrentPage] = useState(() => {
+    const token = localStorage.getItem("focusflow-token");
+    const user = localStorage.getItem("focusflow-user");
+
+    if (token && user) {
+      return "dashboard";
+    }
+
+    return "landing";
+  });
+
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("focusflow-user");
+
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [activePage, setActivePage] = useState("overview");
 
   const [selectedTask, setSelectedTask] = useState(null);
 
+  const handleLogout = () => {
+    localStorage.removeItem("focusflow-token");
+    localStorage.removeItem("focusflow-user");
+
+    setUser(null);
+    setActivePage("overview");
+    setSidebarOpen(false);
+    setCurrentPage("landing");
+  };
+
   const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem("focusflow-tasks");
+    const savedUser = localStorage.getItem("focusflow-user");
+
+    if (!savedUser) {
+      return [];
+    }
+
+    const loggedInUser = JSON.parse(savedUser);
+
+    const savedTasks = localStorage.getItem(
+      `focusflow-tasks-${loggedInUser.id}`
+    );
 
     return savedTasks
       ? JSON.parse(savedTasks)
@@ -64,31 +102,87 @@ function App() {
       ];
   });
 
+  // STEP 2 — Save tasks
   useEffect(() => {
+    if (!user) return;
+
     localStorage.setItem(
-      "focusflow-tasks",
+      `focusflow-tasks-${user.id}`,
       JSON.stringify(tasks)
     );
-  }, [tasks]);
+  }, [tasks, user]);
+
+
+  // STEP 3 — Load tasks when user changes
+  useEffect(() => {
+    if (!user) {
+      setTasks([]);
+      return;
+    }
+
+    const savedTasks = localStorage.getItem(
+      `focusflow-tasks-${user.id}`
+    );
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    } else {
+      setTasks([
+        {
+          id: 1,
+          title: "Finish React project",
+          priority: "High",
+          completed: false,
+        },
+        {
+          id: 2,
+          title: "Practice JavaScript",
+          priority: "Medium",
+          completed: false,
+        },
+        {
+          id: 3,
+          title: "Update GitHub README",
+          priority: "Low",
+          completed: true,
+        },
+        {
+          id: 4,
+          title: "Read React documentation",
+          priority: "Medium",
+          completed: true,
+        },
+      ]);
+    }
+  }, [user]);
+
 
   // Sessions
   const [sessions, setSessions] = useState(() => {
-    const savedSessions =
-      localStorage.getItem("focusflow-sessions");
+    const savedUser = localStorage.getItem("focusflow-user");
 
-    return savedSessions
-      ? JSON.parse(savedSessions)
-      : [];
+    if (!savedUser) {
+      return [];
+    }
+
+    const loggedInUser = JSON.parse(savedUser);
+
+    const savedSessions = localStorage.getItem(
+      `focusflow-sessions-${loggedInUser.id}`
+    );
+
+    return savedSessions ? JSON.parse(savedSessions) : [];
   });
 
-
-  // Save sessions
+  // Save sessions for the logged-in user
   useEffect(() => {
+    if (!user) return;
+
     localStorage.setItem(
-      "focusflow-sessions",
+      `focusflow-sessions-${user.id}`,
       JSON.stringify(sessions)
     );
-  }, [sessions]);
+  }, [sessions, user]);
 
   const completeSession = useCallback((duration) => {
     if (!selectedTask) return;
@@ -112,6 +206,21 @@ function App() {
       newSession,
     ]);
   }, [selectedTask, tasks]);
+
+  useEffect(() => {
+    if (!user) {
+      setSessions([]);
+      return;
+    }
+
+    const savedSessions = localStorage.getItem(
+      `focusflow-sessions-${user.id}`
+    );
+
+    setSessions(
+      savedSessions ? JSON.parse(savedSessions) : []
+    );
+  }, [user]);
 
   const clearHistory = () => {
     setSessions([]);
@@ -222,6 +331,34 @@ function App() {
       />
     );
   }
+
+  if (currentPage === "signup") {
+    return (
+      <Signup
+        onSignup={(userData) => {
+          setUser(userData);
+          setActivePage("overview");
+          setSidebarOpen(false);
+          setCurrentPage("dashboard");
+        }}
+        onLogin={() => setCurrentPage("login")}
+      />
+    );
+  }
+
+  if (currentPage === "login") {
+    return (
+      <Login
+        onLogin={(userData) => {
+          setUser(userData);
+          setActivePage("overview");
+          setSidebarOpen(false);
+          setCurrentPage("dashboard");
+        }}
+        onSignup={() => setCurrentPage("signup")}
+      />
+    );
+  }
   return (
 
 
@@ -302,6 +439,14 @@ function App() {
           </a>
         </nav>
 
+        <button
+          className="sidebar-item logout-button"
+          onClick={handleLogout}
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
+
         <div className="sidebar-bottom">
           <div className="streak-box">
             <Flame size={22} />
@@ -347,7 +492,7 @@ function App() {
             </button>
 
             <div className="avatar">
-              S
+              {user?.name?.charAt(0).toUpperCase() || "U"}
             </div>
 
           </div>
@@ -365,7 +510,7 @@ function App() {
                 </p>
 
                 <h1>
-                  {greeting}, Shreya
+                  {greeting}, {user?.name || "there"} 👋
                 </h1>
 
                 <p className="subtitle">
