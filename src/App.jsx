@@ -505,6 +505,7 @@ function App() {
           setCurrentPage("dashboard");
         }}
         onLogin={() => setCurrentPage("login")}
+        onBack={() => setCurrentPage("landing")}
       />
     );
   }
@@ -519,9 +520,11 @@ function App() {
           setCurrentPage("dashboard");
         }}
         onSignup={() => setCurrentPage("signup")}
+        onBack={() => setCurrentPage("landing")}
       />
     );
   }
+
   return (
 
 

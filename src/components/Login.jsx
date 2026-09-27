@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, ArrowLeft, Sparkles } from "lucide-react";
 
-function Login({ onLogin, onSignup }) {
+function Login({ onLogin, onSignup, onBack }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -66,11 +66,11 @@ function Login({ onLogin, onSignup }) {
                 {/* Left Branding Section */}
                 <div className="auth-brand">
                     <button
-                        className="auth-back"
-                        onClick={() => window.history.back()}
+                        type="button"
+                        className="auth-back-button"
+                        onClick={onBack}
                     >
-                        <ArrowLeft size={18} />
-                        Back
+                        ← Back
                     </button>
 
                     <div className="auth-brand-content">

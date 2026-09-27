@@ -7,7 +7,7 @@ import {
     Check,
 } from "lucide-react";
 
-function Signup({ onSignup, onLogin }) {
+function Signup({ onSignup, onLogin, onBack }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -85,11 +85,11 @@ function Signup({ onSignup, onLogin }) {
                 {/* Left Branding Section */}
                 <div className="auth-brand">
                     <button
-                        className="auth-back"
-                        onClick={() => window.history.back()}
+                        type="button"
+                        className="auth-back-button"
+                        onClick={onBack}
                     >
-                        <ArrowLeft size={18} />
-                        Back
+                        ← Back
                     </button>
 
                     <div className="auth-brand-content">
