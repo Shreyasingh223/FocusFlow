@@ -12,9 +12,21 @@ import {
 import "./Resources.css";
 
 function Resources() {
+    const savedUser = localStorage.getItem("focusflow-user");
+    const user = savedUser ? JSON.parse(savedUser) : null;
+
     const [resources, setResources] = useState(() => {
-        const savedResources =
-            localStorage.getItem("focusflow-resources");
+        const savedUser = localStorage.getItem("focusflow-user");
+
+        if (!savedUser) {
+            return [];
+        }
+
+        const loggedInUser = JSON.parse(savedUser);
+
+        const savedResources = localStorage.getItem(
+            `focusflow-resources-${loggedInUser.id}`
+        );
 
         return savedResources
             ? JSON.parse(savedResources)
@@ -28,11 +40,14 @@ function Resources() {
     const [selectedFile, setSelectedFile] = useState(null);
 
     // Save resources
+    // Save resources for logged-in user
     const saveResources = (updatedResources) => {
         setResources(updatedResources);
 
+        if (!user) return;
+
         localStorage.setItem(
-            "focusflow-resources",
+            `focusflow-resources-${user.id}`,
             JSON.stringify(updatedResources)
         );
     };

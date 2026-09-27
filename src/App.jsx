@@ -5,8 +5,9 @@ import TaskList from "./components/TaskList";
 import Timer from "./components/Timer";
 import Calendar from "./components/Calendar";
 import Resources from "./components/Resources";
+import SettingsPage from "./components/Settings";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
   CheckSquare,
@@ -48,6 +49,10 @@ function App() {
   const [activePage, setActivePage] = useState("overview");
 
   const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedTaskDetails, setSelectedTaskDetails] =
+    useState(null);
+
+  const [taskFilter, setTaskFilter] = useState("all");
 
   const handleLogout = () => {
     localStorage.removeItem("focusflow-token");
@@ -57,54 +62,86 @@ function App() {
     setActivePage("overview");
     setSidebarOpen(false);
     setCurrentPage("landing");
+
+    setSelectedTask(null);
+    setSelectedTaskDetails(null);
   };
 
-  const [tasks, setTasks] = useState(() => {
-    const savedUser = localStorage.getItem("focusflow-user");
+  // ===============================
+  // TASKS
+  // ===============================
 
-    if (!savedUser) {
-      return [];
+  const [tasks, setTasks] = useState([]);
+
+  const isLoadingTasks = useRef(false);
+
+  // Load tasks whenever the logged-in user changes
+  useEffect(() => {
+    if (!user) {
+      setTasks([]);
+      return;
     }
 
-    const loggedInUser = JSON.parse(savedUser);
+    const storageKey = `focusflow-tasks-${user.id}`;
+    const savedTasks = localStorage.getItem(storageKey);
 
-    const savedTasks = localStorage.getItem(
-      `focusflow-tasks-${loggedInUser.id}`
+    isLoadingTasks.current = true;
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+      return;
+    }
+
+    const defaultTasks = [
+      {
+        id: 1,
+        title: "Finish React project",
+        priority: "High",
+        skill: "React",
+        createdAt: new Date().toISOString(),
+        deadline: "",
+        completed: false,
+        completedAt: null,
+      },
+      {
+        id: 2,
+        title: "Practice JavaScript",
+        priority: "Medium",
+        skill: "JavaScript",
+        createdAt: new Date().toISOString(),
+        deadline: "",
+        completed: false,
+        completedAt: null,
+      },
+      {
+        id: 3,
+        title: "Update GitHub README",
+        priority: "Low",
+        skill: "GitHub",
+        createdAt: new Date().toISOString(),
+        deadline: "",
+        completed: false,
+        completedAt: null,
+      },
+    ];
+
+    setTasks(defaultTasks);
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify(defaultTasks)
     );
+  }, [user]);
 
-    return savedTasks
-      ? JSON.parse(savedTasks)
-      : [
-        {
-          id: 1,
-          title: "Finish React project",
-          priority: "High",
-          completed: false,
-        },
-        {
-          id: 2,
-          title: "Practice JavaScript",
-          priority: "Medium",
-          completed: false,
-        },
-        {
-          id: 3,
-          title: "Update GitHub README",
-          priority: "Low",
-          completed: true,
-        },
-        {
-          id: 4,
-          title: "Read React documentation",
-          priority: "Medium",
-          completed: true,
-        },
-      ];
-  });
-
-  // STEP 2 — Save tasks
+  // Save tasks only after they have been loaded
   useEffect(() => {
     if (!user) return;
+
+    // Skip the save caused by loading a user's tasks
+    if (isLoadingTasks.current) {
+      isLoadingTasks.current = false;
+      return;
+    }
 
     localStorage.setItem(
       `focusflow-tasks-${user.id}`,
@@ -112,67 +149,78 @@ function App() {
     );
   }, [tasks, user]);
 
+  // ===============================
+  // SESSIONS
+  // ===============================
 
-  // STEP 3 — Load tasks when user changes
+  const [sessions, setSessions] = useState([]);
+
+  const isLoadingSessions = useRef(false);
+
+  // Load sessions whenever the logged-in user changes
   useEffect(() => {
     if (!user) {
-      setTasks([]);
+      setSessions([]);
       return;
     }
 
-    const savedTasks = localStorage.getItem(
-      `focusflow-tasks-${user.id}`
-    );
+    const storageKey = `focusflow-sessions-${user.id}`;
+    const savedSessions = localStorage.getItem(storageKey);
 
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    } else {
-      setTasks([
-        {
-          id: 1,
-          title: "Finish React project",
-          priority: "High",
-          completed: false,
-        },
-        {
-          id: 2,
-          title: "Practice JavaScript",
-          priority: "Medium",
-          completed: false,
-        },
-        {
-          id: 3,
-          title: "Update GitHub README",
-          priority: "Low",
-          completed: true,
-        },
-        {
-          id: 4,
-          title: "Read React documentation",
-          priority: "Medium",
-          completed: true,
-        },
-      ]);
-    }
+    isLoadingSessions.current = true;
+
+    setSessions(
+      savedSessions
+        ? JSON.parse(savedSessions)
+        : []
+    );
   }, [user]);
 
+  // Save sessions only after they have been loaded
+  useEffect(() => {
+    if (!user) return;
 
-  // Sessions
-  const [sessions, setSessions] = useState(() => {
-    const savedUser = localStorage.getItem("focusflow-user");
-
-    if (!savedUser) {
-      return [];
+    // Skip the save caused by loading a user's sessions
+    if (isLoadingSessions.current) {
+      isLoadingSessions.current = false;
+      return;
     }
 
-    const loggedInUser = JSON.parse(savedUser);
-
-    const savedSessions = localStorage.getItem(
-      `focusflow-sessions-${loggedInUser.id}`
+    localStorage.setItem(
+      `focusflow-sessions-${user.id}`,
+      JSON.stringify(sessions)
     );
+  }, [sessions, user]);
 
-    return savedSessions ? JSON.parse(savedSessions) : [];
-  });
+  const completeSession = useCallback(
+    (duration) => {
+      if (!selectedTask) return;
+
+      const task = tasks.find(
+        (task) => task.id === selectedTask
+      );
+
+      if (!task) return;
+
+      const newSession = {
+        id: Date.now(),
+        taskId: task.id,
+        taskTitle: task.title,
+        duration: duration,
+        completedAt: new Date().toISOString(),
+      };
+
+      setSessions((previousSessions) => [
+        ...previousSessions,
+        newSession,
+      ]);
+    },
+    [selectedTask, tasks]
+  );
+
+  const clearHistory = () => {
+    setSessions([]);
+  };
 
   // Save sessions for the logged-in user
   useEffect(() => {
@@ -183,29 +231,6 @@ function App() {
       JSON.stringify(sessions)
     );
   }, [sessions, user]);
-
-  const completeSession = useCallback((duration) => {
-    if (!selectedTask) return;
-
-    const task = tasks.find(
-      (task) => task.id === selectedTask
-    );
-
-    if (!task) return;
-
-    const newSession = {
-      id: Date.now(),
-      taskId: task.id,
-      taskTitle: task.title,
-      duration: 25,
-      completedAt: new Date().toISOString(),
-    };
-
-    setSessions((previousSessions) => [
-      ...previousSessions,
-      newSession,
-    ]);
-  }, [selectedTask, tasks]);
 
   useEffect(() => {
     if (!user) {
@@ -221,10 +246,6 @@ function App() {
       savedSessions ? JSON.parse(savedSessions) : []
     );
   }, [user]);
-
-  const clearHistory = () => {
-    setSessions([]);
-  };
 
   //find selected tasks
   const currentTask = tasks.find(
@@ -283,6 +304,7 @@ function App() {
   const currentStreak = calculateStreak();
 
   // Analytics
+
   const completedTasks = tasks.filter(
     (task) => task.completed
   ).length;
@@ -295,11 +317,152 @@ function App() {
       : 0;
 
   const totalFocusSessions = sessions.length;
+  // ===============================
+  // TASK INTELLIGENCE
+  // ===============================
 
-  const totalFocusMinutes = sessions.reduce(
-    (total, session) => total + session.duration,
-    0
+  const pendingTasks = tasks.filter(
+    (task) => !task.completed
   );
+
+  const completedTaskList = tasks.filter(
+    (task) => task.completed
+  );
+
+  const overdueTasks = tasks.filter((task) => {
+    if (!task.deadline || task.completed) {
+      return false;
+    }
+
+    const deadline = new Date(task.deadline);
+    deadline.setHours(23, 59, 59, 999);
+
+    return deadline < new Date();
+  });
+
+  const taskCompletionRate =
+    totalTasks > 0
+      ? Math.round(
+        (completedTaskList.length / totalTasks) * 100
+      )
+      : 0;
+
+  const getDeadlineStatus = (task) => {
+    if (!task.completed || !task.deadline) {
+      return null;
+    }
+
+    if (!task.completedAt) {
+      return "on-time";
+    }
+
+    const completedDate = new Date(task.completedAt);
+    const deadlineDate = new Date(task.deadline);
+
+    completedDate.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+
+    if (completedDate < deadlineDate) {
+      return "early";
+    }
+
+    if (completedDate > deadlineDate) {
+      return "late";
+    }
+
+    return "on-time";
+  };
+
+  const getDaysDifference = (task) => {
+    if (
+      !task.completed ||
+      !task.deadline ||
+      !task.completedAt
+    ) {
+      return null;
+    }
+
+    const completedDate = new Date(task.completedAt);
+    const deadlineDate = new Date(task.deadline);
+
+    completedDate.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+
+    return Math.round(
+      (deadlineDate - completedDate) /
+      (1000 * 60 * 60 * 24)
+    );
+  };
+
+  const earlyTasks = completedTaskList.filter(
+    (task) => getDeadlineStatus(task) === "early"
+  );
+
+  const onTimeTasks = completedTaskList.filter(
+    (task) => getDeadlineStatus(task) === "on-time"
+  );
+
+  const lateTasks = completedTaskList.filter(
+    (task) => getDeadlineStatus(task) === "late"
+  );
+
+  const skillStats = {};
+
+  tasks.forEach((task) => {
+    const skill = task.skill || "Other";
+
+    if (!skillStats[skill]) {
+      skillStats[skill] = {
+        total: 0,
+        completed: 0,
+        focusMinutes: 0,
+      };
+    }
+
+    skillStats[skill].total += 1;
+
+    if (task.completed) {
+      skillStats[skill].completed += 1;
+    }
+
+    const taskSessions = sessions.filter(
+      (session) => session.taskId === task.id
+    );
+
+    skillStats[skill].focusMinutes +=
+      taskSessions.reduce(
+        (total, session) => total + session.duration,
+        0
+      );
+  });
+
+  const skillList = Object.entries(skillStats);
+
+  const filteredTaskIntelligence = tasks.filter((task) => {
+    if (taskFilter === "completed") {
+      return task.completed;
+    }
+
+    if (taskFilter === "pending") {
+      return !task.completed;
+    }
+
+    if (taskFilter === "overdue") {
+      return overdueTasks.some(
+        (item) => item.id === task.id
+      );
+    }
+
+    if (taskFilter === "early") {
+      return getDeadlineStatus(task) === "early";
+    }
+
+    if (taskFilter === "late") {
+      return getDeadlineStatus(task) === "late";
+    }
+
+    return true;
+  });
 
   // Dynamic date and greeting
   const now = new Date();
@@ -392,10 +555,16 @@ function App() {
             <span>Overview</span>
           </button>
 
-          <a className="nav-item">
+          <button
+            className={`nav-item ${activePage === "tasks" ? "active" : ""}`}
+            onClick={() => {
+              setActivePage("tasks");
+              setSidebarOpen(false);
+            }}
+          >
             <CheckSquare size={20} />
             <span>Tasks</span>
-          </a>
+          </button>
 
           <button
             className={`nav-item ${activePage === "analytics" ? "active" : ""
@@ -433,19 +602,27 @@ function App() {
             <span>Resources</span>
           </button>
 
-          <a className="nav-item">
+          <button
+            className={`nav-item ${activePage === "settings" ? "active" : ""
+              }`}
+            onClick={() => {
+              setActivePage("settings");
+              setSidebarOpen(false);
+            }}
+          >
             <Settings size={20} />
             <span>Settings</span>
-          </a>
-        </nav>
+          </button>
 
-        <button
-          className="sidebar-item logout-button"
-          onClick={handleLogout}
-        >
-          <LogOut size={20} />
-          <span>Logout</span>
-        </button>
+          <button
+            className={`nav-item ${activePage === "logout" ? "active" : ""
+              }`}
+            onClick={handleLogout}
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </button>
+        </nav>
 
         <div className="sidebar-bottom">
           <div className="streak-box">
@@ -567,6 +744,556 @@ function App() {
             </>
           )}
 
+          {activePage === "tasks" && (
+            <div className="task-intelligence-page">
+
+              <div className="task-intelligence-header">
+                <div>
+                  <p className="eyebrow">
+                    TASK INTELLIGENCE
+                  </p>
+
+                  <h1>
+                    My Task Performance
+                  </h1>
+
+                  <p>
+                    Understand how you plan, complete and manage
+                    your work.
+                  </p>
+                </div>
+              </div>
+
+
+              {/* Statistics */}
+
+              <div className="task-intelligence-stats">
+
+                <div className="task-insight-card">
+                  <span>Total Tasks</span>
+                  <strong>{totalTasks}</strong>
+                  <small>all tasks</small>
+                </div>
+
+                <div className="task-insight-card">
+                  <span>Completed</span>
+                  <strong>{completedTasks}</strong>
+                  <small>finished</small>
+                </div>
+
+                <div className="task-insight-card">
+                  <span>Pending</span>
+                  <strong>{pendingTasks.length}</strong>
+                  <small>remaining</small>
+                </div>
+
+                <div className="task-insight-card">
+                  <span>Completion Rate</span>
+                  <strong>{taskCompletionRate}%</strong>
+                  <small>overall</small>
+                </div>
+
+                <div className="task-insight-card">
+                  <span>Overdue</span>
+                  <strong>{overdueTasks.length}</strong>
+                  <small>past deadline</small>
+                </div>
+
+                <div className="task-insight-card">
+                  <span>Skills</span>
+                  <strong>{skillList.length}</strong>
+                  <small>subjects</small>
+                </div>
+
+              </div>
+
+
+              {/* Deadline + Skills */}
+
+              <div className="task-intelligence-grid">
+
+                <div className="task-intelligence-panel">
+
+                  <div className="panel-heading">
+                    <h2>Deadline Performance</h2>
+
+                    <p>
+                      See how your completion timing compares
+                      with your deadlines.
+                    </p>
+                  </div>
+
+                  <div className="deadline-performance">
+
+                    <div className="deadline-item">
+                      <span>Completed Early</span>
+                      <strong>{earlyTasks.length}</strong>
+                    </div>
+
+                    <div className="deadline-item">
+                      <span>On Time</span>
+                      <strong>{onTimeTasks.length}</strong>
+                    </div>
+
+                    <div className="deadline-item">
+                      <span>Completed Late</span>
+                      <strong>{lateTasks.length}</strong>
+                    </div>
+
+                    <div className="deadline-item">
+                      <span>Still Pending</span>
+                      <strong>{pendingTasks.length}</strong>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <div className="task-intelligence-panel">
+
+                  <div className="panel-heading">
+                    <h2>Skills & Subjects</h2>
+
+                    <p>
+                      Your task distribution by skill.
+                    </p>
+                  </div>
+
+                  <div className="skills-list">
+
+                    {skillList.length === 0 ? (
+                      <p className="empty-insight">
+                        Add skills to your tasks to see them here.
+                      </p>
+                    ) : (
+                      skillList.map(([skill, data]) => {
+
+                        const percentage =
+                          data.total > 0
+                            ? Math.round(
+                              (data.completed /
+                                data.total) *
+                              100
+                            )
+                            : 0;
+
+                        return (
+                          <div
+                            className="skill-row"
+                            key={skill}
+                          >
+
+                            <div>
+                              <strong>{skill}</strong>
+
+                              <span>
+                                {data.completed} / {data.total}
+                              </span>
+                            </div>
+
+                            <div className="skill-progress">
+
+                              <div
+                                style={{
+                                  width: `${percentage}%`,
+                                }}
+                              />
+
+                            </div>
+
+                          </div>
+                        );
+                      })
+                    )}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              {/* Task History */}
+
+              <div className="task-intelligence-panel">
+
+                <div className="task-filter-header">
+
+                  <div>
+                    <h2>Task Performance</h2>
+
+                    <p>
+                      Click any task to see detailed performance.
+                    </p>
+                  </div>
+
+                  <div className="task-filters">
+
+                    {[
+                      ["all", "All"],
+                      ["pending", "Pending"],
+                      ["completed", "Completed"],
+                      ["early", "Early"],
+                      ["late", "Late"],
+                      ["overdue", "Overdue"],
+                    ].map(([value, label]) => (
+
+                      <button
+                        key={value}
+                        className={
+                          taskFilter === value
+                            ? "active"
+                            : ""
+                        }
+                        onClick={() =>
+                          setTaskFilter(value)
+                        }
+                      >
+                        {label}
+                      </button>
+
+                    ))}
+
+                  </div>
+
+                </div>
+
+
+                <div className="intelligence-task-list">
+
+                  {filteredTaskIntelligence.length === 0 ? (
+
+                    <div className="empty-task-intelligence">
+
+                      <h3>No tasks found</h3>
+
+                      <p>
+                        There are no tasks matching this filter.
+                      </p>
+
+                    </div>
+
+                  ) : (
+
+                    filteredTaskIntelligence.map((task) => {
+
+                      const taskSessions =
+                        sessions.filter(
+                          (session) =>
+                            session.taskId === task.id
+                        );
+
+                      const taskFocusMinutes =
+                        taskSessions.reduce(
+                          (total, session) =>
+                            total + session.duration,
+                          0
+                        );
+
+                      const status =
+                        getDeadlineStatus(task);
+
+                      const days =
+                        getDaysDifference(task);
+
+                      let performance = "Pending";
+
+                      if (task.completed) {
+
+                        if (status === "early") {
+                          performance =
+                            `${days} day${days === 1 ? "" : "s"
+                            } early`;
+                        } else if (status === "late") {
+                          performance =
+                            `${Math.abs(days)} day${Math.abs(days) === 1
+                              ? ""
+                              : "s"
+                            } late`;
+                        } else {
+                          performance = "On time";
+                        }
+
+                      } else if (
+                        task.deadline &&
+                        new Date(task.deadline) < new Date()
+                      ) {
+                        performance = "Overdue";
+                      }
+
+                      return (
+
+                        <div
+                          className="intelligence-task-row"
+                          key={task.id}
+                          onClick={() =>
+                            setSelectedTaskDetails(task)
+                          }
+                        >
+
+                          <div className="intelligence-task-main">
+
+                            <div
+                              className={
+                                task.completed
+                                  ? "task-status-dot completed"
+                                  : "task-status-dot"
+                              }
+                            />
+
+                            <div>
+
+                              <h3>
+                                {task.title}
+                              </h3>
+
+                              <div className="task-meta">
+
+                                <span>
+                                  {task.skill || "Other"}
+                                </span>
+
+                                <span>
+                                  {task.priority}
+                                </span>
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+
+                          <div className="intelligence-task-info">
+
+                            <div>
+                              <small>Focus</small>
+
+                              <strong>
+                                {taskFocusMinutes >= 60
+                                  ? `${Math.floor(
+                                    taskFocusMinutes / 60
+                                  )}h ${taskFocusMinutes % 60
+                                  }m`
+                                  : `${taskFocusMinutes}m`}
+                              </strong>
+                            </div>
+
+                            <div>
+                              <small>Deadline</small>
+
+                              <strong>
+                                {task.deadline
+                                  ? new Date(
+                                    task.deadline
+                                  ).toLocaleDateString()
+                                  : "Not set"}
+                              </strong>
+                            </div>
+
+                            <div>
+                              <small>Completed</small>
+
+                              <strong>
+                                {task.completedAt
+                                  ? new Date(
+                                    task.completedAt
+                                  ).toLocaleDateString()
+                                  : "—"}
+                              </strong>
+                            </div>
+
+                            <div>
+                              <small>Performance</small>
+
+                              <strong>
+                                {performance}
+                              </strong>
+                            </div>
+
+                          </div>
+
+                        </div>
+                      );
+                    })
+
+                  )}
+
+                </div>
+
+              </div>
+
+
+              {/* Task Details */}
+
+              {selectedTaskDetails && (
+
+                <div
+                  className="task-details-overlay"
+                  onClick={() =>
+                    setSelectedTaskDetails(null)
+                  }
+                >
+
+                  <div
+                    className="task-details-modal"
+                    onClick={(e) =>
+                      e.stopPropagation()
+                    }
+                  >
+
+                    <button
+                      className="task-details-close"
+                      onClick={() =>
+                        setSelectedTaskDetails(null)
+                      }
+                    >
+                      ×
+                    </button>
+
+                    <p className="eyebrow">
+                      TASK DETAILS
+                    </p>
+
+                    <h2>
+                      {selectedTaskDetails.title}
+                    </h2>
+
+                    <div className="task-detail-tags">
+
+                      <span>
+                        {selectedTaskDetails.priority}
+                      </span>
+
+                      <span>
+                        {selectedTaskDetails.skill ||
+                          "Other"}
+                      </span>
+
+                    </div>
+
+
+                    <div className="task-detail-grid">
+
+                      <div>
+                        <small>Created</small>
+
+                        <strong>
+                          {selectedTaskDetails.createdAt
+                            ? new Date(
+                              selectedTaskDetails.createdAt
+                            ).toLocaleDateString()
+                            : "Not available"}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <small>Deadline</small>
+
+                        <strong>
+                          {selectedTaskDetails.deadline
+                            ? new Date(
+                              selectedTaskDetails.deadline
+                            ).toLocaleDateString()
+                            : "Not set"}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <small>Completed</small>
+
+                        <strong>
+                          {selectedTaskDetails.completedAt
+                            ? new Date(
+                              selectedTaskDetails.completedAt
+                            ).toLocaleDateString()
+                            : "Not completed"}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <small>Performance</small>
+
+                        <strong>
+                          {getDeadlineStatus(
+                            selectedTaskDetails
+                          ) === "early"
+                            ? `${getDaysDifference(
+                              selectedTaskDetails
+                            )} days early`
+                            : getDeadlineStatus(
+                              selectedTaskDetails
+                            ) === "late"
+                              ? `${Math.abs(
+                                getDaysDifference(
+                                  selectedTaskDetails
+                                )
+                              )} days late`
+                              : selectedTaskDetails.completed
+                                ? "Completed on time"
+                                : "Still pending"}
+                        </strong>
+                      </div>
+
+                    </div>
+
+
+                    {(() => {
+
+                      const taskSessions =
+                        sessions.filter(
+                          (session) =>
+                            session.taskId ===
+                            selectedTaskDetails.id
+                        );
+
+                      const taskFocusMinutes =
+                        taskSessions.reduce(
+                          (total, session) =>
+                            total + session.duration,
+                          0
+                        );
+
+                      return (
+
+                        <div className="task-focus-summary">
+
+                          <div>
+                            <span>Focus Time</span>
+
+                            <strong>
+                              {taskFocusMinutes >= 60
+                                ? `${Math.floor(
+                                  taskFocusMinutes / 60
+                                )}h ${taskFocusMinutes % 60
+                                }m`
+                                : `${taskFocusMinutes}m`}
+                            </strong>
+                          </div>
+
+                          <div>
+                            <span>Pomodoro Sessions</span>
+
+                            <strong>
+                              {taskSessions.length}
+                            </strong>
+                          </div>
+
+                        </div>
+
+                      );
+
+                    })()}
+
+                  </div>
+
+                </div>
+
+              )}
+
+            </div>
+          )}
 
           {activePage === "analytics" && (
             <Analytics
@@ -584,6 +1311,15 @@ function App() {
 
           {activePage === "resources" && (
             <Resources />
+          )}
+
+          {activePage === "settings" && (
+            <SettingsPage
+              user={user}
+              darkMode={darkMode}
+              setDarkMode={setDarkMode}
+              handleLogout={handleLogout}
+            />
           )}
 
         </section>

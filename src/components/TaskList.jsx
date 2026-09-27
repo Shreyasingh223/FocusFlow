@@ -13,6 +13,8 @@ function TaskList({
   const [newTask, setNewTask] = useState({
     title: "",
     priority: "Medium",
+    skill: "",
+    deadline: "",
   });
 
   // Add a new task
@@ -23,9 +25,13 @@ function TaskList({
 
     const task = {
       id: Date.now(),
-      title: newTask.title,
+      title: newTask.title.trim(),
       priority: newTask.priority,
+      skill: newTask.skill.trim() || "Other",
+      createdAt: new Date().toISOString(),
+      deadline: newTask.deadline || "",
       completed: false,
+      completedAt: null,
     };
 
     setTasks((previousTasks) => [
@@ -36,6 +42,8 @@ function TaskList({
     setNewTask({
       title: "",
       priority: "Medium",
+      skill: "",
+      deadline: "",
     });
 
     setShowForm(false);
@@ -44,14 +52,21 @@ function TaskList({
   // Complete / uncomplete task
   const toggleTask = (id) => {
     setTasks((previousTasks) =>
-      previousTasks.map((task) =>
-        task.id === id
-          ? {
-            ...task,
-            completed: !task.completed,
-          }
-          : task
-      )
+      previousTasks.map((task) => {
+        if (task.id !== id) {
+          return task;
+        }
+
+        const completingTask = !task.completed;
+
+        return {
+          ...task,
+          completed: completingTask,
+          completedAt: completingTask
+            ? new Date().toISOString()
+            : null,
+        };
+      })
     );
   };
 
@@ -132,6 +147,32 @@ function TaskList({
             autoFocus
           />
 
+          <input
+            type="text"
+            placeholder="Skill / Subject (e.g. React, DBMS, Python)"
+            value={newTask.skill}
+            onChange={(e) =>
+              setNewTask({
+                ...newTask,
+                skill: e.target.value,
+              })
+            }
+          />
+
+          <label className="task-date-label">
+            Deadline
+          </label>
+
+          <input
+            type="date"
+            value={newTask.deadline}
+            onChange={(e) =>
+              setNewTask({
+                ...newTask,
+                deadline: e.target.value,
+              })
+            }
+          />
 
           <select
             value={newTask.priority}
