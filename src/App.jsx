@@ -67,9 +67,7 @@ function App() {
     setSelectedTaskDetails(null);
   };
 
-  // ===============================
   // TASKS
-  // ===============================
 
   const [tasks, setTasks] = useState([]);
 
@@ -149,9 +147,7 @@ function App() {
     );
   }, [tasks, user]);
 
-  // ===============================
   // SESSIONS
-  // ===============================
 
   const [sessions, setSessions] = useState([]);
 
@@ -317,9 +313,8 @@ function App() {
       : 0;
 
   const totalFocusSessions = sessions.length;
-  // ===============================
-  // TASK INTELLIGENCE
-  // ===============================
+
+  // Task Intelligence
 
   const pendingTasks = tasks.filter(
     (task) => !task.completed
