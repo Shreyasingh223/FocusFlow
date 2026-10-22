@@ -27,6 +27,9 @@ import {
 
 import "./App.css";
 
+
+const API_BASE_URL = "https://focusflow-backend-ktmp.onrender.com";
+
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -69,83 +72,79 @@ function App() {
 
   // TASKS
 
+  
+  // TASKS
   const [tasks, setTasks] = useState([]);
-
   const isLoadingTasks = useRef(false);
 
-  // Load tasks whenever the logged-in user changes
+  // Load tasks from the backend when the logged-in user changes
   useEffect(() => {
-    if (!user) {
-      setTasks([]);
-      return;
-    }
+    let cancelled = false;
 
-    const storageKey = `focusflow-tasks-${user.id}`;
-    const savedTasks = localStorage.getItem(storageKey);
+    const loadTasks = async () => {
+      if (!user) {
+        setTasks([]);
+        return;
+      }
 
-    isLoadingTasks.current = true;
+      const token = localStorage.getItem("focusflow-token");
 
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-      return;
-    }
+      if (!token) {
+        setTasks([]);
+        return;
+      }
 
-    const defaultTasks = [
-      {
-        id: 1,
-        title: "Finish React project",
-        priority: "High",
-        skill: "React",
-        createdAt: new Date().toISOString(),
-        deadline: "",
-        completed: false,
-        completedAt: null,
-      },
-      {
-        id: 2,
-        title: "Practice JavaScript",
-        priority: "Medium",
-        skill: "JavaScript",
-        createdAt: new Date().toISOString(),
-        deadline: "",
-        completed: false,
-        completedAt: null,
-      },
-      {
-        id: 3,
-        title: "Update GitHub README",
-        priority: "Low",
-        skill: "GitHub",
-        createdAt: new Date().toISOString(),
-        deadline: "",
-        completed: false,
-        completedAt: null,
-      },
-    ];
+      isLoadingTasks.current = true;
 
-    setTasks(defaultTasks);
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify(defaultTasks)
-    );
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load tasks");
+        }
+
+        if (cancelled) return;
+
+        if (Array.isArray(data.tasks) && data.tasks.length > 0) {
+          setTasks(data.tasks);
+        } else {
+          // Keep existing local tasks safe until migration is implemented.
+          const storageKey = `focusflow-tasks-${user.id}`;
+          const savedTasks = localStorage.getItem(storageKey);
+
+          setTasks(savedTasks ? JSON.parse(savedTasks) : []);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Failed to load tasks:", error);
+          const storageKey = `focusflow-tasks-${user.id}`;
+          const savedTasks = localStorage.getItem(storageKey);
+
+          setTasks(savedTasks ? JSON.parse(savedTasks) : []);
+        }
+      } finally {
+        if (!cancelled) {
+          isLoadingTasks.current = false;
+        }
+      }
+    };
+
+    loadTasks();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
-  // Save tasks only after they have been loaded
-  useEffect(() => {
-    if (!user) return;
-
-    // Skip the save caused by loading a user's tasks
-    if (isLoadingTasks.current) {
-      isLoadingTasks.current = false;
-      return;
-    }
-
-    localStorage.setItem(
-      `focusflow-tasks-${user.id}`,
-      JSON.stringify(tasks)
-    );
-  }, [tasks, user]);
+  // Do not automatically save tasks to localStorage here.
+  // Task changes will be saved through the backend API.
 
   // SESSIONS
 
