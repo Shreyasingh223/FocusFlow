@@ -40,7 +40,7 @@ function Signup({ onSignup, onLogin, onBack }) {
             setLoading(true);
 
             const response = await fetch(
-                "https://focusflow-backend-ktmp.onrender.com//api/auth/register",
+                "https://focusflow-backend-ktmp.onrender.com/api/auth/register",
                 {
                     method: "POST",
                     headers: {

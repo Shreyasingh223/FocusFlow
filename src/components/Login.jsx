@@ -23,7 +23,7 @@ function Login({ onLogin, onSignup, onBack }) {
             setLoading(true);
 
             const response = await fetch(
-                "https://focusflow-backend-ktmp.onrender.com//api/auth/login",
+                "https://focusflow-backend-ktmp.onrender.com/api/auth/login",
                 {
                     method: "POST",
                     headers: {
