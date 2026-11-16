@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 const Task = require("../models/Task");
@@ -16,6 +15,10 @@ const formatTask = (task) => ({
   priority: task.priority,
   skill: task.skill || "Other",
   deadline: task.deadline || "",
+  scheduledStartAt: task.scheduledStartAt || null,
+  scheduledEndAt: task.scheduledEndAt || null,
+  estimatedDuration: task.estimatedDuration,
+  actualDurationSeconds: task.actualDurationSeconds,
   completed: task.completed,
   createdAt: task.createdAt,
   completedAt: task.completedAt,
@@ -24,13 +27,18 @@ const formatTask = (task) => ({
 // GET all tasks belonging to the logged-in user
 router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find({ userId: req.userId }).sort({
-      createdAt: -1,
-    });
+    const tasks = await Task.find({ userId: req.userId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const formattedTasks = tasks.map((task) => ({
+      ...formatTask(task),
+      actualDurationSeconds: task.actualDurationSeconds ?? 0,
+    }));
 
     res.json({
       success: true,
-      tasks: tasks.map(formatTask),
+      tasks: formattedTasks,
     });
   } catch (error) {
     res.status(500).json({
@@ -43,7 +51,15 @@ router.get("/", async (req, res) => {
 // CREATE a task
 router.post("/", async (req, res) => {
   try {
-    const { title, priority, skill, deadline } = req.body;
+    const {
+      title,
+      priority,
+      skill,
+      deadline,
+      estimatedDuration,
+      scheduledStartAt,
+      scheduledEndAt,
+    } = req.body;
 
     if (!title || !title.trim()) {
       return res.status(400).json({
@@ -52,12 +68,42 @@ router.post("/", async (req, res) => {
       });
     }
 
+    // Validate scheduled date and time
+    if (
+      (scheduledStartAt && !scheduledEndAt) ||
+      (!scheduledStartAt && scheduledEndAt)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Both scheduled start and end times are required.",
+      });
+    }
+
+    if (scheduledStartAt && scheduledEndAt) {
+      const start = new Date(scheduledStartAt);
+      const end = new Date(scheduledEndAt);
+
+      if (
+        Number.isNaN(start.getTime()) ||
+        Number.isNaN(end.getTime()) ||
+        end <= start
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Scheduled end time must be later than start time.",
+        });
+      }
+    }
+
     const task = await Task.create({
       userId: req.userId,
       title: title.trim(),
       priority: priority || "Medium",
       skill: skill?.trim() || "Other",
       deadline: deadline || "",
+      scheduledStartAt: scheduledStartAt || null,
+      scheduledEndAt: scheduledEndAt || null,
+      estimatedDuration: Number(estimatedDuration) || 30,
       completed: false,
       completedAt: null,
     });
@@ -91,6 +137,9 @@ router.patch("/:id", async (req, res) => {
       "priority",
       "skill",
       "deadline",
+      "scheduledStartAt",
+      "scheduledEndAt",
+      "estimatedDuration",
       "completed",
       "completedAt",
     ];
@@ -100,6 +149,52 @@ router.patch("/:id", async (req, res) => {
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
         updates[field] = req.body[field];
+      }
+    }
+
+    // Validate updated schedule using existing values when needed
+    const existingTask = await Task.findOne({
+      _id: id,
+      userId: req.userId,
+    });
+
+    if (!existingTask) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    const startValue =
+      updates.scheduledStartAt !== undefined
+        ? updates.scheduledStartAt
+        : existingTask.scheduledStartAt;
+
+    const endValue =
+      updates.scheduledEndAt !== undefined
+        ? updates.scheduledEndAt
+        : existingTask.scheduledEndAt;
+
+    if ((startValue && !endValue) || (!startValue && endValue)) {
+      return res.status(400).json({
+        success: false,
+        message: "Both scheduled start and end times are required.",
+      });
+    }
+
+    if (startValue && endValue) {
+      const start = new Date(startValue);
+      const end = new Date(endValue);
+
+      if (
+        Number.isNaN(start.getTime()) ||
+        Number.isNaN(end.getTime()) ||
+        end <= start
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Scheduled end time must be later than start time.",
+        });
       }
     }
 
@@ -121,7 +216,7 @@ router.patch("/:id", async (req, res) => {
     const task = await Task.findOneAndUpdate(
       { _id: id, userId: req.userId },
       updates,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!task) {

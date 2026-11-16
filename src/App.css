@@ -3145,3 +3145,11 @@ nav {
     border-radius: 7px;
   }
 }
+
+.task-schedule {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-secondary, #777);
+  line-height: 1.5;
+}

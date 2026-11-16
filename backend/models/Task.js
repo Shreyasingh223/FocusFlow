@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema(
@@ -33,6 +32,29 @@ const taskSchema = new mongoose.Schema(
       default: "",
     },
 
+    scheduledStartAt: {
+      type: Date,
+      default: null,
+    },
+
+    scheduledEndAt: {
+      type: Date,
+      default: null,
+    },
+
+    estimatedDuration: {
+      type: Number,
+      required: true,
+      min: 1,
+      default: 30,
+    },
+
+    actualDurationSeconds: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     completed: {
       type: Boolean,
       default: false,
@@ -50,7 +72,7 @@ const taskSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Task", taskSchema);
