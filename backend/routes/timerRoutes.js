@@ -191,16 +191,23 @@ router.post("/stop", async (req, res) => {
     await dbSession.withTransaction(async () => {
       const { taskId } = req.body;
 
-      // Find the timer for the selected task, or the currently running timer
+      // A valid task ID is required
+      if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
+        result = {
+          status: 400,
+          body: {
+            success: false,
+            message: "Valid task ID is required",
+          },
+        };
+        return;
+      }
+
+      // Find the timer for this specific task
       const timerQuery = {
         userId: req.userId,
+        taskId,
       };
-
-      if (taskId && mongoose.Types.ObjectId.isValid(taskId)) {
-        timerQuery.taskId = taskId;
-      } else {
-        timerQuery.status = "running";
-      }
 
       const timer = await ActiveTimer.findOne(timerQuery)
         .sort({ updatedAt: -1 })
@@ -288,11 +295,11 @@ router.post("/stop", async (req, res) => {
 
     return res.status(result.status).json(result.body);
   } catch (error) {
-    console.error("Stop timer error:", error.message);
+    console.error("Stop timer error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to stop timer",
+      message: error.message || "Failed to stop timer",
     });
   } finally {
     await dbSession.endSession();
@@ -618,143 +625,6 @@ router.post("/resume", async (req, res) => {
 });
 
 // STOP the active timer and save total actual duration
-router.post("/stop", async (req, res) => {
-  const dbSession = await mongoose.startSession();
-
-  try {
-    let result = null;
-
-    await dbSession.withTransaction(async () => {
-      // Find the user's active timer
-      const timer = await ActiveTimer.findOne({
-        userId: req.userId,
-      }).session(dbSession);
-
-      if (!timer) {
-        result = {
-          status: 404,
-          body: {
-            success: false,
-            message: "No active timer found",
-          },
-        };
-        return;
-      }
-
-      let totalElapsedSeconds = timer.elapsedSeconds || 0;
-
-      // If running, close the current work session
-      if (timer.status === "running") {
-        const session = await WorkSession.findOne({
-          _id: timer.currentSessionId,
-          userId: req.userId,
-          endedAt: null,
-        }).session(dbSession);
-
-        if (!session) {
-          throw new Error("Current work session not found");
-        }
-
-        const endedAt = new Date();
-
-        const durationSeconds = Math.max(
-          0,
-          Math.floor(
-            (endedAt.getTime() - new Date(session.startedAt).getTime()) / 1000,
-          ),
-        );
-
-        session.endedAt = endedAt;
-        session.durationSeconds = durationSeconds;
-
-        await session.save({ session: dbSession });
-
-        totalElapsedSeconds += durationSeconds;
-      }
-
-      // Find the task belonging to this user
-      const task = await Task.findOne({
-        _id: timer.taskId,
-        userId: req.userId,
-      }).session(dbSession);
-
-      if (!task) {
-        throw new Error("Associated task not found");
-      }
-
-      // Add the total tracked time to the task
-      const updateResult = await Task.updateOne(
-        {
-          _id: task._id,
-          userId: req.userId,
-        },
-        {
-          $inc: {
-            actualDurationSeconds: totalElapsedSeconds,
-          },
-        },
-        { session: dbSession },
-      );
-
-      const rawTask = await Task.collection.findOne(
-        {
-          _id: task._id,
-          userId: task.userId,
-        },
-        {
-          session: dbSession,
-        },
-      );
-
-      const updatedTask = await Task.findOne({
-        _id: task._id,
-        userId: req.userId,
-      }).session(dbSession);
-
-      // Remove the active timer
-      await ActiveTimer.deleteOne(
-        {
-          _id: timer._id,
-          userId: req.userId,
-        },
-        { session: dbSession },
-      );
-
-      result = {
-        status: 200,
-        body: {
-          success: true,
-          message: "Timer stopped successfully",
-          actualDurationSeconds: totalElapsedSeconds,
-          task: {
-            id: task._id.toString(),
-            title: task.title,
-            totalActualDurationSeconds:
-              (task.actualDurationSeconds || 0) + totalElapsedSeconds,
-          },
-        },
-      };
-    });
-
-    if (!result) {
-      return res.status(500).json({
-        success: false,
-        message: "Unable to stop timer",
-      });
-    }
-
-    return res.status(result.status).json(result.body);
-  } catch (error) {
-    console.error("Stop timer error:", error.message);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to stop timer",
-    });
-  } finally {
-    await dbSession.endSession();
-  }
-});
 
 // GET the logged-in user's work session history
 router.get("/history", async (req, res) => {

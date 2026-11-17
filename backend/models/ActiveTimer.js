@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const activeTimerSchema = new mongoose.Schema(
@@ -7,7 +6,7 @@ const activeTimerSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
+      index: true,
     },
 
     taskId: {
@@ -18,8 +17,8 @@ const activeTimerSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["running", "paused"],
-      default: "paused",
+      enum: ["running", "paused", "stopped"],
+      default: "stopped",
     },
 
     currentSessionId: {
@@ -41,7 +40,9 @@ const activeTimerSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
+
+activeTimerSchema.index({ userId: 1, taskId: 1 }, { unique: true });
 
 module.exports = mongoose.model("ActiveTimer", activeTimerSchema);

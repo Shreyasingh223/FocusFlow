@@ -107,6 +107,49 @@ function TaskList({
     const hasAnySchedule =
       scheduledDate || scheduledStartTime || scheduledEndTime;
 
+    // Check for conflicts with existing scheduled tasks
+    if (hasAnySchedule && scheduledDate && scheduledStartTime && scheduledEndTime) {
+      const newStart = new Date(
+        `${scheduledDate}T${scheduledStartTime}:00`
+      );
+
+      const newEnd = new Date(
+        `${scheduledDate}T${scheduledEndTime}:00`
+      );
+
+      const conflictingTasks = tasks.filter((task) => {
+        if (
+          task.completed ||
+          !task.scheduledStartAt ||
+          !task.scheduledEndAt
+        ) {
+          return false;
+        }
+
+        const existingStart = new Date(task.scheduledStartAt);
+        const existingEnd = new Date(task.scheduledEndAt);
+
+        return newStart < existingEnd && newEnd > existingStart;
+      });
+
+      if (conflictingTasks.length > 0) {
+        const conflictDetails = conflictingTasks
+          .map(
+            (task) =>
+              `• ${task.title} (${task.priority || "Medium"})`
+          )
+          .join("\n");
+
+        const confirmConflict = window.confirm(
+          `Schedule Conflict Detected!\n\nYour new task overlaps with:\n\n${conflictDetails}\n\nDo you still want to schedule this task at this time?`
+        );
+
+        if (!confirmConflict) {
+          return;
+        }
+      }
+    }
+
     if (hasAnySchedule) {
       if (
         !scheduledDate ||
@@ -132,6 +175,21 @@ function TaskList({
           "Scheduled end time must be later than start time."
         );
         return;
+      }
+      const scheduledDurationMinutes =
+        (end.getTime() - start.getTime()) / 60000;
+
+      const estimatedDurationMinutes =
+        Number(newTask.estimatedDuration);
+
+      if (estimatedDurationMinutes > scheduledDurationMinutes) {
+        const confirmCreate = window.confirm(
+          `Your estimated duration (${estimatedDurationMinutes} min) exceeds your scheduled time (${scheduledDurationMinutes} min).\n\nYou may not finish within the scheduled slot.\n\nDo you still want to create this task?`
+        );
+
+        if (!confirmCreate) {
+          return;
+        }
       }
     }
 

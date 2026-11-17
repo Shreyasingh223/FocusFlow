@@ -72,7 +72,7 @@ function App() {
 
   // TASKS
 
-  
+
   // TASKS
   const [tasks, setTasks] = useState([]);
   const isLoadingTasks = useRef(false);
@@ -844,6 +844,203 @@ function App() {
 
                   </div>
 
+                  {/* Upcoming Scheduled Tasks */}
+                  <div className="deadline-scheduled-tasks">
+
+                    <h3>Upcoming Scheduled Tasks</h3>
+
+                    {tasks.filter(
+                      (task) =>
+                        !task.completed &&
+                        task.scheduledStartAt &&
+                        task.scheduledEndAt
+                    ).length === 0 ? (
+
+                      <p className="deadline-empty-message">
+                        No upcoming scheduled tasks.
+                      </p>
+
+                    ) : (
+
+                      tasks
+                        .filter(
+                          (task) =>
+                            !task.completed &&
+                            task.scheduledStartAt &&
+                            task.scheduledEndAt
+                        )
+                        .sort(
+                          (a, b) =>
+                            new Date(a.scheduledStartAt) -
+                            new Date(b.scheduledStartAt)
+                        )
+                        .slice(0, 5)
+                        .map((task) => (
+
+                          <div
+                            className="deadline-scheduled-task"
+                            key={task.id}
+                          >
+
+                            <div>
+                              <strong>{task.title}</strong>
+
+                              <span>
+                                {new Date(
+                                  task.scheduledStartAt
+                                ).toLocaleDateString("en-IN", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
+                                {" · "}
+                                {new Date(
+                                  task.scheduledStartAt
+                                ).toLocaleTimeString("en-IN", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                })}
+                                {" – "}
+                                {new Date(
+                                  task.scheduledEndAt
+                                ).toLocaleTimeString("en-IN", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+
+                            <span
+                              className={`priority ${(task.priority || "Medium").toLowerCase()
+                                }`}
+                            >
+                              {task.priority || "Medium"}
+                            </span>
+
+                          </div>
+
+                        ))
+
+                    )}
+
+                  </div>
+
+
+                  {/* Schedule Conflict Information */}
+                  {(() => {
+                    const scheduledTasks = tasks.filter(
+                      (task) =>
+                        !task.completed &&
+                        task.scheduledStartAt &&
+                        task.scheduledEndAt
+                    );
+
+                    const conflicts = [];
+
+                    for (let i = 0; i < scheduledTasks.length; i++) {
+                      for (let j = i + 1; j < scheduledTasks.length; j++) {
+                        const firstTask = scheduledTasks[i];
+                        const secondTask = scheduledTasks[j];
+
+                        const firstStart = new Date(
+                          firstTask.scheduledStartAt
+                        );
+
+                        const firstEnd = new Date(
+                          firstTask.scheduledEndAt
+                        );
+
+                        const secondStart = new Date(
+                          secondTask.scheduledStartAt
+                        );
+
+                        const secondEnd = new Date(
+                          secondTask.scheduledEndAt
+                        );
+
+                        if (
+                          firstStart < secondEnd &&
+                          firstEnd > secondStart
+                        ) {
+                          conflicts.push({
+                            firstTask,
+                            secondTask,
+                          });
+                        }
+                      }
+                    }
+
+                    return (
+                      <div className="deadline-conflicts">
+
+                        <h3>Schedule Conflicts</h3>
+
+                        {conflicts.length === 0 ? (
+
+                          <p className="conflict-empty">
+                            No schedule conflicts detected. Your schedule looks good!
+                          </p>
+
+                        ) : (
+
+                          conflicts.map((conflict, index) => (
+
+                            <div
+                              className="conflict-item"
+                              key={`${conflict.firstTask.id}-${conflict.secondTask.id}`}
+                            >
+
+                              <div className="conflict-icon">
+                                !
+                              </div>
+
+                              <div className="conflict-content">
+
+                                <strong>
+                                  {conflict.firstTask.title}
+                                  {" "}
+                                  <span>overlaps with</span>
+                                  {" "}
+                                  {conflict.secondTask.title}
+                                </strong>
+
+                                <p>
+                                  {new Date(
+                                    conflict.firstTask.scheduledStartAt
+                                  ).toLocaleDateString("en-IN")}
+                                  {" · "}
+                                  {new Date(
+                                    conflict.firstTask.scheduledStartAt
+                                  ).toLocaleTimeString("en-IN", {
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                  })}
+                                  {" – "}
+                                  {new Date(
+                                    conflict.firstTask.scheduledEndAt
+                                  ).toLocaleTimeString("en-IN", {
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                  })}
+                                </p>
+
+                                <p>
+                                  Both tasks are scheduled during overlapping time slots.
+                                </p>
+
+                              </div>
+
+                            </div>
+
+                          ))
+
+                        )}
+
+                      </div>
+                    );
+                  })()}
+
+
                 </div>
 
 
@@ -1110,6 +1307,130 @@ function App() {
                             </div>
 
                           </div>
+
+
+                          {/* Smart Time Details */}
+                          {(() => {
+                            const estimatedMinutes = Number(
+                              task.estimatedDuration || 0
+                            );
+
+                            const actualSeconds = Number(
+                              task.actualDurationSeconds || 0
+                            );
+
+                            const actualMinutes = Math.round(
+                              actualSeconds / 60
+                            );
+
+                            const formatMinutes = (minutes) => {
+                              if (minutes >= 60) {
+                                const hours = Math.floor(minutes / 60);
+                                const remaining = minutes % 60;
+
+                                return remaining > 0
+                                  ? `${hours}h ${remaining}m`
+                                  : `${hours}h`;
+                              }
+
+                              return `${minutes} min`;
+                            };
+
+                            const timeDifference =
+                              actualMinutes - estimatedMinutes;
+
+                            let differenceText = "—";
+                            let performanceText = "";
+
+                            if (estimatedMinutes > 0) {
+                              if (timeDifference > 0) {
+                                differenceText =
+                                  `${formatMinutes(timeDifference)} overtime`;
+
+                                performanceText =
+                                  `The task took ${formatMinutes(timeDifference)} longer than estimated.`;
+                              } else if (timeDifference < 0) {
+                                differenceText =
+                                  `${formatMinutes(Math.abs(timeDifference))} saved`;
+
+                                performanceText =
+                                  `The task was completed ${formatMinutes(Math.abs(timeDifference))} earlier than estimated.`;
+                              } else {
+                                differenceText = "On estimate";
+
+                                performanceText =
+                                  "The task took exactly the estimated time.";
+                              }
+                            }
+
+                            const scheduledTime =
+                              task.scheduledStartAt &&
+                                task.scheduledEndAt
+                                ? `${new Date(task.scheduledStartAt).toLocaleTimeString("en-IN", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                })} – ${new Date(task.scheduledEndAt).toLocaleTimeString("en-IN", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                })}`
+                                : "Not scheduled";
+
+                            return (
+                              <div className="intelligence-smart-details">
+
+                                <h4>Smart Time Details</h4>
+
+                                <div className="smart-details-grid">
+
+                                  <div>
+                                    <small>Scheduled</small>
+                                    <strong>{scheduledTime}</strong>
+                                  </div>
+
+                                  <div>
+                                    <small>Estimated</small>
+                                    <strong>
+                                      {estimatedMinutes > 0
+                                        ? formatMinutes(estimatedMinutes)
+                                        : "Not set"}
+                                    </strong>
+                                  </div>
+
+                                  <div>
+                                    <small>Actual</small>
+                                    <strong>
+                                      {formatMinutes(actualMinutes)}
+                                    </strong>
+                                  </div>
+
+                                  <div>
+                                    <small>Time difference</small>
+                                    <strong
+                                      className={
+                                        timeDifference > 0
+                                          ? "time-overtime"
+                                          : timeDifference < 0
+                                            ? "time-saved"
+                                            : ""
+                                      }
+                                    >
+                                      {estimatedMinutes > 0
+                                        ? differenceText
+                                        : "—"}
+                                    </strong>
+                                  </div>
+
+                                </div>
+
+                                {performanceText && (
+                                  <p className="smart-performance-message">
+                                    {performanceText}
+                                  </p>
+                                )}
+
+                              </div>
+                            );
+                          })()}
 
                         </div>
                       );
