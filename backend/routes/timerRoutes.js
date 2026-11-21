@@ -624,7 +624,142 @@ router.post("/resume", async (req, res) => {
   }
 });
 
-// STOP the active timer and save total actual duration
+// COMPLETE a task and save its tracked time
+router.post("/complete", async (req, res) => {
+  const dbSession = await mongoose.startSession();
+
+  try {
+    let result = null;
+
+    await dbSession.withTransaction(async () => {
+      const { taskId } = req.body;
+
+      if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
+        result = {
+          status: 400,
+          body: {
+            success: false,
+            message: "Valid task ID is required",
+          },
+        };
+        return;
+      }
+
+      // Find the task belonging to the logged-in user
+      const task = await Task.findOne({
+        _id: taskId,
+        userId: req.userId,
+      }).session(dbSession);
+
+      if (!task) {
+        result = {
+          status: 404,
+          body: {
+            success: false,
+            message: "Task not found",
+          },
+        };
+        return;
+      }
+
+      if (task.completed) {
+        result = {
+          status: 400,
+          body: {
+            success: false,
+            message: "Task is already completed",
+          },
+        };
+        return;
+      }
+
+      // Find this task's timer
+      const timer = await ActiveTimer.findOne({
+        userId: req.userId,
+        taskId,
+      }).session(dbSession);
+
+      let totalElapsedSeconds = timer
+        ? timer.elapsedSeconds || 0
+        : task.timerElapsedSeconds || 0;
+
+      // Close the current session if the timer is running
+      if (timer && timer.status === "running" && timer.currentSessionId) {
+        const session = await WorkSession.findOne({
+          _id: timer.currentSessionId,
+          userId: req.userId,
+          endedAt: null,
+        }).session(dbSession);
+
+        if (session) {
+          const endedAt = new Date();
+
+          const durationSeconds = Math.max(
+            0,
+            Math.floor(
+              (endedAt.getTime() -
+                new Date(session.startedAt).getTime()) / 1000
+            )
+          );
+
+          session.endedAt = endedAt;
+          session.durationSeconds = durationSeconds;
+
+          await session.save({ session: dbSession });
+
+          totalElapsedSeconds += durationSeconds;
+        }
+      }
+
+      // Mark task completed and save actual tracked duration
+      task.completed = true;
+      task.completedAt = new Date();
+      task.actualDurationSeconds =
+        (task.actualDurationSeconds || 0) + totalElapsedSeconds;
+
+      task.timerElapsedSeconds = 0;
+
+      await task.save({ session: dbSession });
+
+      // Keep timer record but stop it
+      if (timer) {
+        timer.elapsedSeconds = totalElapsedSeconds;
+        timer.status = "stopped";
+        timer.startedAt = null;
+        timer.currentSessionId = null;
+
+        await timer.save({ session: dbSession });
+      }
+
+      result = {
+        status: 200,
+        body: {
+          success: true,
+          message: "Task completed successfully",
+          elapsedSeconds: totalElapsedSeconds,
+          task: {
+            id: task._id.toString(),
+            title: task.title,
+            completed: task.completed,
+            completedAt: task.completedAt,
+            actualDurationSeconds: task.actualDurationSeconds,
+          },
+        },
+      };
+    });
+
+    return res.status(result.status).json(result.body);
+  } catch (error) {
+    console.error("Complete timer error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to complete task",
+    });
+  } finally {
+    await dbSession.endSession();
+  }
+});
 
 // GET the logged-in user's work session history
 router.get("/history", async (req, res) => {
